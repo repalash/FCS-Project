@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+<h1>Edit details</h1>
+<!-- Form -->
+<section>
+    {% if is_error %}
+    <p><strong> {{error}} </strong></p>
+    {% endif %}
+    <form method="post" action="#" name="form">
+        {% csrf_token %}
+        <div class="row uniform">
+            <div class="3u 12u$(xsmall)">
+                Username
+            </div>
+            <div class="9u 12u$(xsmall)">
+                <input type="text" name="username" id="username" value="{{username}}" placeholder=""/>
+            </div>
+            <div class="3u 12u$(xsmall)">
+                Password
+            </div>
+            <div class="9u 12u$(xsmall)">
+                <input type="password" name="password" id="password" value="" placeholder=""/>
+            </div>
+            <div class="3u 12u$(xsmall)">
+                Re-enter password
+            </div>
+            <div class="9u 12u$(xsmall)">
+                <input type="password" name="repeat_password" id="repeat_password" value=""
+                       placeholder=""/>
+            </div>
+            <div class="3u 12u$(xsmall)">
+                Name
+            </div>
+            <div class="9u 12u$(xsmall)">
+                <input type="text" name="name" id="name" value="{{name}}" placeholder=""/>
+            </div>
+            <div class="3u 12u$(xsmall)">
+                Phone
+            </div>
+            <div class="9u 12u$(xsmall)">
+                <input type="text" name="phone" id="phone" value="{{phone}}" placeholder=""/>
+            </div>
+            <div class="3u 12u$(xsmall)">
+                Address
+            </div>
+            <div class="9u 12u$(xsmall)">
+                <input type="text" name="address" id="address" value="{{address}}" placeholder=""/>
+            </div>
+
+
+        </div>
+
+        <div class="12u$">
+            <ul class="actions">
+                <li><input type="submit" value="Send Message" class="special"/></li>
+            </ul>
+        </div>
+    </form>
+</section>

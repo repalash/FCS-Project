@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}List of user accounts to troubleshoot {% endblock %}
+
+{% block content %}
+<h1>Access regular employee</h1>
+<!-- Table -->
+<section>
+    <div class="12u$">
+
+        <div class="table-wrapper 12u$">
+
+            <table class="alt">
+                <thead>
+
+                <tr>
+                    <th>Username</th>
+                    <th>Account number</th>
+                    <th>User link</th>
+                </tr>
+
+                </thead>
+                <tbody>
+                {% for i in user %}
+                <tr>
+                    <td>{{i.username}}</td>
+                    <td>{{i.account_number}}</td>
+                    <td>{{i.user_link}}</td>
+                    <!--<td> <a href="#" class="button small">Approve</a> <a href="#" class="button small">Ignore</a> </td>-->
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

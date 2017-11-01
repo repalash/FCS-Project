@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Handle requests {% endblock %}
+
+{% block content %}
+								<section>
+									<br>
+									<h2>Handle Requests</h2>
+									<div class="table-wrapper">
+										<table>
+											<thead>
+												<tr>
+													<th>Name</th>
+													<th>Description</th>
+													<th>Price</th>
+												</tr>
+											</thead>
+											<tbody>
+                                                {% for i in List_of_requests_assigned %}
+												<tr>
+													<td>{{i}}</td>
+													<td><div class="12u$">
+                                                            <ul class="actions">
+                                                                <li><input type="submit" value="accept" class="special" /></li>
+                                                            </ul>
+                                                        </div></td>
+													<td><div class="12u$">
+                                                            <ul class="actions">
+                                                                <li><input type="submit" value="reject" class="special" /></li>
+                                                            </ul>
+                                                        </div></td>
+                                                </tr>
+                                                {% endfor %}
+											</tbody>
+										</table>
+									</div>
+								</section>
+								{% endblock %}

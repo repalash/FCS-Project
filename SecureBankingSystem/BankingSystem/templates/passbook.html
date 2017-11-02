@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<!--
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Elements - Phantom by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+                        <div class="inner">
+
+
+                            <!-- Nav -->
+                                <nav>
+                                    <ul>
+                                        <li><a href="#menu">Menu</a></li>
+                                    </ul>
+                                </nav>
+
+                        </div>
+                    </header>
+					
+                    <nav id="menu">
+						<h2>Menu</h2>
+						<ul>
+							<li><a href="#">{{username}}</a></li>
+							<li><a href="#">Logout</a></li>
+							
+						</ul>
+					</nav>
+			
+				
+
+
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner  ">
+							<h1>Passbook</h1>
+							
+								<section>
+							<div class="12u$">		
+
+									<div class="table-wrapper 12u$">
+									
+										<table class="alt">
+											<thead>
+												<tr>
+													<th>Transaction Id</th>
+													<th>Satus</th>
+													<th>Amount</th>
+													
+												</tr>
+											</thead>
+											<tbody>
+											{% for i in transactions %}
+												<tr>
+													<td>{{i.transaction_id}}</td>
+													<td>{{i.status}}</td>
+													<td>{{i.amount}}</td>
+													<!--<td> <a href="#" class="button small">Approve</a> <a href="#" class="button small">Ignore</a> </td>-->
+												</tr>
+											{% endfor % }
+												
+											</tbody>
+										</table>
+									</div>
+							</div>			
+							</section>
+
+							
+                   <div class="12u$">
+							<ul class="actions">
+							<li><input type="submit" value="Download/Print	" class="special" /></li>
+							</ul>
+			       </div>
+							
+
+							
+
+						</div>
+					</div>
+            
+				
+
+			</div>
+          <!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>   
+		
+
+	</body>
+</html>

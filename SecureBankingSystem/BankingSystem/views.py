@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from BankingSystem.utils import custom_redirect
+from BankingSystem.utils import custom_redirect, do_get
 
 
 @login_required()
@@ -22,8 +22,8 @@ def login_view(request):
 	}
 	if request.method != 'POST':
 		return render(request, 'login.html', fields)
-	username = request.POST['username']
-	password = request.POST['password']
+	username = do_get(request.POST, 'username')
+	password = do_get(request.POST, 'password')
 	user = authenticate(request, username=username, password=password)
 	if user is not None:
 		login(request, user)
@@ -33,28 +33,30 @@ def login_view(request):
 	return render(request, 'login.html', fields)
 
 
-@login_required()
-def dashboardExternal(request):  # External user dashboard - Changed name
+@login_required(login_url='login_view')
+def dashboard_external(request):  # External user dashboard - Changed name
 	fields = {
 		'username': request.user.username,
-		'redirect_info': request.GET['info'],  # Like already logged in
-		'redirect_success': request.GET['success'],  # Like login successful
-		'redirect_error': request.GET['error'],  # Generic site error
+		'redirect_info': do_get(request.GET, 'info'),  # Like already logged in
+		'redirect_success': do_get(request.GET, 'success'),  # Like login successful
+		'redirect_error': do_get(request.GET, 'error'),  # Generic site error
 		'error': '',
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
-		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'), #check if user is Company
+		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'),  # check if user is Company
 		# Add more here
 	}
 
-	return render(request, 'dashboard.html', fields)
+	return render(request, 'dashboard_external_user.html', fields)
+
 
 def approve_debit_credit(request):
-	users = [] # contain list of users where each object has username, account number and balance
+	users = []  # contain list of users where each object has username, account number and balance
 	fields = {
 		'username': request.user.username,
 		'users': users,
 	}
 	return
+
 
 def dashboard_internal(request):
 	fields = {
@@ -62,6 +64,7 @@ def dashboard_internal(request):
 		'has_perm_create_payments': request.user.has_perm('BankingSystem.employee_operations'),
 		# Add more here
 	}
+
 
 def edit_user_details(request):
 	username = request.POST['username']
@@ -79,7 +82,10 @@ def edit_user_details(request):
 		'error': '',
 	}
 
+
 def handle_request_technical_account_access(request):
+	pass
+
 
 def make_transaction(request):
 	sender_account_number = request.POST['sender_account_number']
@@ -101,12 +107,14 @@ def passbook(request):
 	}
 	account_number = request.POST['account_number']
 
+
 def reenter_password(request):
 	password = request.POST['password']
 	fields = {
 		'username': request.user.username,
-		'error':'',
+		'error': '',
 	}
+
 
 def request_transaction_review(request):
 	fields = {
@@ -121,7 +129,7 @@ def request_transaction_review(request):
 def transaction_confirmation(request):
 	fields = {
 		'username': request.user.username,
-		'error':'',
+		'error': '',
 	}
 	password = request.POST['password']
 	otp = request.POST['otp']

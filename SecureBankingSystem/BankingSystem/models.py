@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import transaction as transaction
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -21,8 +22,8 @@ class Profile(models.Model):
 	user = models.OneToOneField(User, unique=True, on_delete=CASCADE, primary_key=True)
 	phone = models.CharField(max_length=13)
 	address = models.CharField(max_length=200)
-	is_employee = models.BooleanField(default=False)
-	ticket_employee = models.ForeignKey("self", null=True, default=None, on_delete=SET_NULL, blank=True)
+	ticket_employee = models.ForeignKey("self", null=True, default=None, on_delete=SET_NULL, blank=True,
+	                                    related_name="employee_ticket")
 	creation_time = models.DateTimeField(auto_now_add=True)
 	last_changed_time = models.DateTimeField(auto_now=True)
 

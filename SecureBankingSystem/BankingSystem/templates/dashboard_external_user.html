@@ -2,6 +2,9 @@
 {% block title %} Dashboard {% endblock %}
 
 {% block content %}
+    <div style="color: red">{{ redirect_error }}</div>
+    <div style="color: green">{{ redirect_success }}</div>
+    <div style="color: yellow">{{ redirect_info }}</div>
 <div class="12u$">
 
     <div class="table-wrapper 12u$">

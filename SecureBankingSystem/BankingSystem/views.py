@@ -54,8 +54,12 @@ def approve_debit_credit(request):
 	fields = {
 		'username': request.user.username,
 		'users': users,
+		'has_perm_employee_operations': request.user.has_perm('BankingSystem.employee_operations'),
 	}
+	# action of approve and disapprove button
 	return
+
+
 
 
 def dashboard_internal(request):
@@ -96,7 +100,10 @@ def make_transaction(request):
 	fields = {
 		'username': request.user.username,
 		'error': '',
+		'has_perm_view_critical_transactions': request.user.has_perm('BankingSystem.view_critical_transactions'),
+		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'),
 	}
+	return custom_redirect("transaction_confirmation", success='Confirm your transaction.')
 
 
 def passbook(request):
@@ -127,9 +134,33 @@ def request_transaction_review(request):
 
 
 def transaction_confirmation(request):
+	# otp is not authenticated
+
 	fields = {
+		'authentication_error':'',
 		'username': request.user.username,
 		'error': '',
+		'has_perm_user_operations': request.user.has_perm('BankingSystem.view_user_operations'),
+		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'),
 	}
 	password = request.POST['password']
+	username= request.user.username
 	otp = request.POST['otp']
+	user = authenticate(request, username=username, password=password)
+	if user is not None:
+		return custom_redirect("dashboard", success='Successfully transaction.')
+	else:
+		fields['authentication_error'] = 'Invalid username/password'
+
+
+def passbook_account_number(request):
+	fields = {
+		'iserror':False,
+		'error':'',
+	}
+	account_number = request.POST["account_numbar"]
+
+	context = {
+		'account_number':account_number,
+	}
+	return render(request,'passbook.html',context)

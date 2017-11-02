@@ -7,13 +7,11 @@
 
 <!-- Form -->
 <section>
-    <h2>Form</h2>
     {% if is_error %}
-    <p><strong> {{Wrong_transaction_id_error
-        }} </strong></p>
+    <p><strong>Wrong_transaction_id_error</strong></p>
     {% endif %}
 
-    <form method="post" name="form">
+    <form method="post" name="form" action="{% url 'BankingSystem:request_transaction_review'%}">
         {% csrf_token %}
         <div class="row uniform">
             <div class="12u 12u$(xsmall)">
@@ -29,9 +27,14 @@
 "/>
             </div>
             <div class="12u$ 12u$(xsmall)">
-                <textarea name="comment" form="form">Comment</textarea>
+                <textarea name="comment" form="form2">Comment</textarea>
             </div>
-
+            
+            <div class="12u$">
+                <ul class="actions">
+                    <li><input type="submit" value="Submit" class="special" /></li>
+                </ul>
+            </div>
 
         </div>
     </form>

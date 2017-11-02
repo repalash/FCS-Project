@@ -13,22 +13,18 @@
 
             <tbody>
             <tr>
-                <td><a href="#">Make Transaction</a></td>
+                <td><a href="{% url 'BankingSystem:make_transaction' %}">Make Transaction</a></td>
             </tr>
             <tr>
-                <td><a href="#">Debit Account</a></td>
+                <td><a href="{% url 'BankingSystem:approve_debit_credit' %}">Debit Account</a></td>
 
             </tr>
             <tr>
-                <td><a href="#">Credit Account</a></td>
+                <td><a href="{% url 'BankingSystem:passbook' %}">Passbook</a></td>
 
             </tr>
             <tr>
-                <td><a href="#">Banking Statements</a></td>
-
-            </tr>
-            <tr>
-                <td><a href="#">Transaction review</a></td>
+                <td><a href="{% url 'BankingSystem:request_transaction_review' %}">Request Transaction Review</a></td>
             </tr>
             </tbody>
         </table>

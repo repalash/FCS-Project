@@ -2,35 +2,35 @@
 {% block title %}Confirm Transaction {% endblock %}
 
 {% block content %}
-							<h1>Conformation of transaction</h1>
-								<section>
-								{% if authentication_error %}
-									<p><strong> {{error}} </strong></p>
-								{% endif %}
+			<h1>Conformation of transaction</h1>
+				<section>
+				{% if authentication_error %}
+					<p><strong> {{error}} </strong></p>
+				{% endif %}
 
-									<form method="post" action="#" name="form">
-										{% csrf_token %}
-										<div class="row uniform">
-                                            <div class="3u 12u$(xsmall)">
-                                                Password
-                                            </div>
-											<div class="9u 12u$(xsmall)">
-												<input type="password" name="password" id="password" value="" placeholder="password" />
-											</div>
-                                            <div class="3u 12u$(xsmall)">
-                                                    OTP
-                                                </div>
-                                                <div class="9u 12u$(xsmall)">
-                                                    <input type="password" name="password" id="password" value= placeholder="" />
-                                                </div>
+					<form method="post" action="{% url 'BankingSystem:transaction_confirmation' %}" name="form">
+						{% csrf_token %}
+						<div class="row uniform">
+	    <div class="3u 12u$(xsmall)">
+		Password
+	    </div>
+							<div class="9u 12u$(xsmall)">
+								<input type="password" name="password" id="password" value="" placeholder="password" />
+							</div>
+	    <div class="3u 12u$(xsmall)">
+		    OTP
+		</div>
+		<div class="9u 12u$(xsmall)">
+		    <input type="password" name="password" id="password" value= placeholder="" />
+		</div>
 
-                                        </div>
+	</div>
 
-                                        <div class="12u$">
-												<ul class="actions">
-													<li><input type="submit" value="Send Message" class="special" /></li>
-												</ul>
-											</div>
-									</form>
-								</section>
-								{% endblock %}
+	<div class="12u$">
+								<ul class="actions">
+									<li><input type="submit" value="Send Message" class="special" /></li>
+								</ul>
+							</div>
+					</form>
+				</section>
+{% endblock %}

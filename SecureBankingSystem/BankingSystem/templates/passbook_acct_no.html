@@ -29,7 +29,7 @@
 				<p><strong> {{error}} </strong></p>
 			{% endif %}
 
-				<form method="post" action="{% url 'BankingSystem:passbook_acct_no'" %} name="form">
+				<form method="post" action="{% url 'passbook_acct_no'" %} name="form">
 					{% csrf_token %}
 					<div class="row uniform">
 					    <h2> Account No. </h2>

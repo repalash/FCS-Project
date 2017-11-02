@@ -13,22 +13,22 @@
 
             <tbody>
             <tr>
-                <td><a href="make_transactions.html">Make Transaction</a></td>
+                <td><a href="{% url 'make_transaction' %}">Make Transaction</a></td>
             </tr>
             <tr>
-                <td><a href="approve_debit_credit_request.html">Debit/Credit Account</a></td>
+                <td><a href="{% url 'approve_debit_credit' %}">Debit/Credit Account</a></td>
 
             </tr>
             <tr>
-                <td><a href="passbook.html">Passbook</a></td>
+                <td><a href="{% url 'passbook' %}">Passbook</a></td>
 
             </tr>
             <tr>
-                <td><a href="request_transaction_review.html">Request Transaction Review</a></td>
+                <td><a href="{% url 'request_transaction_review' %}">Request Transaction Review</a></td>
             </tr>
             
             <tr>
-                <td><a href="edit_user_details.html">Edit Details</a></td>
+                <td><a href="{% url 'edit_user_details' %}">Edit Details</a></td>
             </tr>
                 
             </tbody>

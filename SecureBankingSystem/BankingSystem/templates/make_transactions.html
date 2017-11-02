@@ -9,7 +9,7 @@
 		<p><strong> {{error}} </strong></p>
 	{% endif %}
 
-		<form method="post" action="#" name="form" url="{% url 'BankingSystem:make_transaction'%}">
+		<form method="post" action="#" name="form" url="{% url 'make_transaction'%}">
 			{% csrf_token %}
 			<div class="row uniform">
 				<div class="12u 12u$(xsmall)">

@@ -11,7 +11,7 @@ from BankingSystem.utils import custom_redirect, do_get
 
 @login_required()
 def index(request):
-	return HttpResponse("Hello, World")
+	return custom_redirect("dashboard")
 
 
 def login_view(request):
@@ -164,3 +164,7 @@ def passbook_account_number(request):
 		'account_number':account_number,
 	}
 	return render(request,'passbook.html',context)
+
+
+def passbook_account_no(request):
+	return None

@@ -11,7 +11,7 @@
     {% if authentication_error %}
     <p><strong> Wrong Credentials </strong></p>
     {% endif %}
-    <form method="post" name="form" action="{% url 'login_view' %}">
+    <form method="post" name="form" action="{% url 'BankingSystem:login_view' %}">
         {% csrf_token %}
         <div class="row uniform">
             <div class="6u 12u$(xsmall)">

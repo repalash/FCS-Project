@@ -2,7 +2,7 @@
 {% block title %}Login {% endblock %}
 
 {% block content %}
-<h1>State Bank of IIITD</h1>
+<h1>Bank of IIITD</h1>
 
 <!-- Form -->
 
@@ -11,7 +11,7 @@
     {% if authentication_error %}
     <p><strong> Wrong Credentials </strong></p>
     {% endif %}
-    <form method="post" name="form">
+    <form method="post" name="form" action="{% url 'login_view' %}">
         {% csrf_token %}
         <div class="row uniform">
             <div class="6u 12u$(xsmall)">

@@ -1,54 +1,40 @@
 {% extends "base.html" %}
-{% block title %} User Details {% endblock %}
-
+{% block title %} User Transaction Details {% endblock %}
 {% block content %}
+    <div id="wrapper">
+        <div id="main">
+            <div class="inner  ">
+                <h1>{{ user.username }} : {{ user.first_name }} {{ user.last_name }}</h1>
+                <section>
+                    <div class="12u$">
+                        <div class="table-wrapper 12u$">
+                            <table class="alt">
+                                <thead>
+                                <tr>
+                                    <th>Transaction Id</th>
+                                    <th>From Account</th>
+                                    <th>To Account</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in account_transactions %}
+                                    <tr>
+                                        <td>{{i.0}}</td>
+                                        <td>{{i.1}}</td>
+                                        <td>{{i.2}}</td>
+                                        <td>{{i.4}}</td>
+                                        <td>{{i.3}}</td>
+                                    </tr>
+                                {% endfor %}
 
-
-		<!-- Wrapper -->
-			<div id="wrapper">
-
-				<!-- Main -->
-					<div id="main">
-						<div class="inner  ">
-							<h1>{{username}}</h1>
-							
-								<section>
-							<div class="12u$">		
-
-									<div class="table-wrapper 12u$">
-									
-										<table class="alt">
-											<thead>
-												<tr>
-													<th>Transaction Id</th>
-													<th>Status</th>
-													<th>Amount</th>
-													
-												</tr>
-											</thead>
-											<tbody>
-											{% for i in transactions %}
-												<tr>
-													<td>{{i.transaction_id}}</td>
-													<td>{{i.status}}</td>
-													<td>{{i.amount}}</td>
-													<!--<td> <a href="#" class="button small">Approve</a> <a href="#" class="button small">Ignore</a> </td>-->
-												</tr>
-											{% endfor % }
-												
-											</tbody>
-										</table>
-									</div>
-							</div>			
-							</section>
-							
-
-							
-
-						</div>
-					</div>
-            
-				
-
-			</div>
-          {% endblock %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}

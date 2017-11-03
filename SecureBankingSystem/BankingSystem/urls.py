@@ -32,5 +32,5 @@ urlpatterns = [
 	url(r'^approve_debit_credit/', employee_views.approve_debit_credit, name='approve_debit_credit'),
 	url(r'^employees_access_user_accounts/', employee_views.employees_access_user_accounts, name='employees_access_user_accounts'),
 	#url(r'^handle_request/', employee_views.handle_request, name='handle_request'),
-	url(r'^user_detail_page/', employee_views.user_detail_page, name='user_detail_page'),
+	url(r'^user_detail_page/(?P<username>[A-Za-z0-9]+)', employee_views.user_detail_page, name='user_detail_page'),
 ]

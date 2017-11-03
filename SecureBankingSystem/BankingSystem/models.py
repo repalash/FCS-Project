@@ -58,12 +58,12 @@ class Transactions(models.Model):
 	CRITICAL_LIMIT = 10000
 	STATUS = (
 		('C', "Created"),
-		('A', "Under Approval"),
+		('A', "Under_Approval"),
 		('P', "Processed"),
-		('I', "Insufficient Funds"),
-		('E', "Unknown Error"),
+		('I', "Insufficient_Funds"),
+		('E', "Error"),
 	)
-	employee = models.ForeignKey(Profile)
+	employee = models.ForeignKey(Profile, null=True, blank=True, on_delete=SET_NULL)
 	from_account = models.ForeignKey(Account, related_name="from_account", null=True, on_delete=SET_NULL, blank=True)
 	to_account = models.ForeignKey(Account, related_name="to_account", null=True, on_delete=SET_NULL, blank=True)
 	amount = models.IntegerField(default=0)
@@ -74,10 +74,13 @@ class Transactions(models.Model):
 	last_changed_time = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
-		return str(self.from_account.number) + " -> " + str(self.to_account.number) + " : " + str(
-			self.amount) + " : " + self.get_status_display()
+		from_account = "Cash" if self.from_account else str(self.from_account.number)
+		to_account = "Cash" if self.to_account else str(self.to_account.number)
+		return str(self.id) + " " + from_account + " " + to_account + "  " + str(
+			self.amount) + " " + self.get_status_display()
 
-	def __init__(self, transaction_type, user, from_account_no, to_account_no, amount):
+	@staticmethod
+	def create(transaction_type, user, from_account_no, to_account_no, amount):
 		if transaction_type != Transactions.TYPE_TRANSACTION:
 			raise Exception('Security error.')
 		from_account = Account.objects.filter(number=from_account_no)[0]
@@ -98,8 +101,11 @@ class Transactions(models.Model):
 		verification_otp = 4321  # TODO palash: randint(999, 10000)
 		if employee is None:
 			raise Exception('No employee available at the moment')
-		super(Transactions, self).__init__(employee=employee, from_account=from_account, to_account=to_account,
-		                                   amount=amount, status='C', is_cash=False, verification_otp=verification_otp)
+		return Transactions(employee=employee, from_account=from_account, to_account=to_account, amount=amount,
+		                    status='C', is_cash=False, verification_otp=verification_otp)
+
+	def __init__(self, *args, **kwargs):
+		super(Transactions, self).__init__(*args, **kwargs)
 
 	def verify_otp(self, otp):
 		if self.verification_otp == 0:
@@ -108,7 +114,7 @@ class Transactions(models.Model):
 			raise Exception('Incorrect OTP')
 		self.status = 'A'
 		self.verification_otp = 0
-
+		self.save()
 
 
 class Payments(models.Model):

@@ -43,8 +43,8 @@ def make_transactions(request):
 	receiver_account_number = request.POST['receiver_account_number']
 	amount = request.POST['amount']
 	try:
-		transaction = Transactions(Transactions.TYPE_TRANSACTION, request.user, sender_account_number,
-		                           receiver_account_number, amount)
+		transaction = Transactions.create(Transactions.TYPE_TRANSACTION, request.user, sender_account_number,
+		                                  receiver_account_number, amount)
 	except Exception as e:
 		fields['error'] = e.message
 		return render(request, 'make_transactions.html', fields)
@@ -102,20 +102,29 @@ def edit_user_details(request):
 
 
 # Show complete transaction history
-# TODO palash: ...
+# TODO team: check HTML, not in format
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
 def passbook(request):  # done
+	accounts = request.user.profile.account_set.all()
+	account_transactions = []
+	for i in accounts:
+		account_transactions.extend(map(lambda x: str(x).split(), list(i.from_account.all())))
+		account_transactions.extend(map(lambda x: str(x).split(), list(i.to_account.all())))
 
-	transactions = []  # list of objects containing transaction_id , status , amount
+	# list of objects containing transaction_id , status , amount
 	# need account number for getting transactions
 	fields = {
 		'username': request.user.username,
 		'error': '',
-		'transactions': transactions,
+		'account_transactions': account_transactions,
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
 		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'),
 	}
 
 	return render(request, 'passbook.html')
 
+
+# TODO team, palash: Make html, fields with employee ID page and redirect to transaction confirmation OTP page.
+def debit_credit(request):
+	return None

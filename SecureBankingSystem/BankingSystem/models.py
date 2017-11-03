@@ -3,12 +3,11 @@ from __future__ import unicode_literals
 
 from random import randint
 
-import transaction as transaction
 from django.contrib.auth.models import User
 from django.db import models
-
-# Create your models here.
 from django.db.models import SET_NULL, CASCADE
+
+from BankingSystem.utils import BankingParseException
 
 
 class Profile(models.Model):
@@ -81,37 +80,54 @@ class Transactions(models.Model):
 
 	@staticmethod
 	def create(transaction_type, user, from_account_no, to_account_no, amount):
+		is_cash = False
 		if transaction_type != Transactions.TYPE_TRANSACTION:
-			raise Exception('Security error.')
-		from_account = Account.objects.filter(number=from_account_no)[0]
-		if from_account is None:
-			raise Exception('You don\'t own this account.')
-		if from_account.user.user.username != user.username:
-			raise Exception('Account doesn\'t belong to you')
-		if from_account.balance < amount:
-			raise Exception("Insufficient Funds")
-		to_account = Account.objects.filter(number=to_account_no)[0]
-		if to_account is None:
-			raise Exception('Cannot send to this account')
+			is_cash = True
+		if from_account_no is None and transaction_type == Transactions.TYPE_CREDIT:
+			from_account = None
+		else:
+			try:
+				amount = int(amount)
+			except:
+				raise BankingParseException("Invalid Amount")
+			from_account = Account.objects.filter(number=from_account_no)
+			if len(from_account) == 0:
+				raise BankingParseException('You don\'t own this account.')
+			from_account = from_account[0]
+			if from_account.user.user.username != user.username:
+				raise BankingParseException('Account doesn\'t belong to you')
+			if from_account.balance < amount:
+				raise BankingParseException("Insufficient Funds")
+		if to_account_no is None and transaction_type == Transactions.TYPE_DEBIT:
+			to_account = None
+		else:
+			to_account = Account.objects.filter(number=to_account_no)
+			if len(to_account) == 0:
+				raise BankingParseException('Cannot send to this account')
+			to_account = to_account[0]
+		if transaction_type == Transactions.TYPE_TRANSACTION and from_account.number == to_account.number:
+			raise BankingParseException("Cannot transfer to same account")
 		group = 'Employee'
 		if amount >= Transactions.CRITICAL_LIMIT:
 			group = 'Staff'
 		employees = User.objects.filter(groups__name=group)
+		if employees.count() == 0:
+			raise BankingParseException('No employee available at the moment')
 		employee = employees[randint(0, employees.count() - 1)]
-		verification_otp = 4321  # TODO palash: randint(999, 10000)
 		if employee is None:
-			raise Exception('No employee available at the moment')
+			raise BankingParseException('No employee available at the moment')
+		verification_otp = 4321  # TODO palash: randint(999, 10000)
 		return Transactions(employee=employee, from_account=from_account, to_account=to_account, amount=amount,
-		                    status='C', is_cash=False, verification_otp=verification_otp)
+		                    status='C', is_cash=is_cash, verification_otp=verification_otp)
 
 	def __init__(self, *args, **kwargs):
 		super(Transactions, self).__init__(*args, **kwargs)
 
 	def verify_otp(self, otp):
 		if self.verification_otp == 0:
-			raise Exception('Expired OTP')
+			raise BankingParseException('Expired OTP')
 		if self.verification_otp != otp:
-			raise Exception('Incorrect OTP')
+			raise BankingParseException('Incorrect OTP')
 		self.status = 'A'
 		self.verification_otp = 0
 		self.save()

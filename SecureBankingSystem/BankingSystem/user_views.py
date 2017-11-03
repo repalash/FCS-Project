@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect
 
 from BankingSystem.models import Transactions
-from BankingSystem.utils import do_get, custom_redirect
+from BankingSystem.utils import do_get, custom_redirect, BankingParseException
 
 
 # External user dashboard
@@ -45,7 +45,7 @@ def make_transactions(request):
 	try:
 		transaction = Transactions.create(Transactions.TYPE_TRANSACTION, request.user, sender_account_number,
 		                                  receiver_account_number, amount)
-	except Exception as e:
+	except BankingParseException as e:
 		fields['error'] = e.message
 		return render(request, 'make_transactions.html', fields)
 	return redirect("transaction_confirmation", transaction_id=transaction.id)
@@ -70,7 +70,7 @@ def transaction_confirmation(request, transaction_id):  # done
 	transaction = Transactions.objects.get(pk=transaction_id)
 	try:
 		transaction.verify_otp(otp)
-	except Exception as e:
+	except BankingParseException as e:
 		fields['authentication_error'] = e.message
 		return render(request, 'transaction_confirmation_otp.html', fields)
 	return custom_redirect("dashboard", success='Transaction sent for approval')

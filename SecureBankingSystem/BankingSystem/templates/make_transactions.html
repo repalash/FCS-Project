@@ -5,10 +5,11 @@
 <h1>Make Transactions</h1>
 	<section>
 
-    <!-- TODO team: beautify this, put somewhere else or whatever
+    <!-- TODO team: beautify this, put somewhere else or whatever -->
 {% for account in accounts %}
     {{ account.number }}
 {% endfor %}
+    <div style="color: red"> {{ error }}</div>
 
 	{% if is_error %}
 		<p><strong> {{error}} </strong></p>

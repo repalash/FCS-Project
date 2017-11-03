@@ -16,6 +16,12 @@
                 <td><a href="{% url 'approve_debit_credit'%}">Debit/Credit Requests</a></td>
 
             </tr>
+            {% if is_system_manager %}
+                <tr>
+                <td><a href="{% url 'employees_access_user_accounts' %}"></a></td>
+
+            </tr>
+            {% endif %}
             </tbody>
         </table>
     </div>

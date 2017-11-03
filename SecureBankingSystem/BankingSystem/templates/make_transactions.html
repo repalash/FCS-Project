@@ -5,6 +5,11 @@
 <h1>Make Transactions</h1>
 	<section>
 
+    <!-- TODO team: beautify this, put somewhere else or whatever
+{% for account in accounts %}
+    {{ account.number }}
+{% endfor %}
+
 	{% if is_error %}
 		<p><strong> {{error}} </strong></p>
 	{% endif %}
@@ -16,10 +21,10 @@
 					<input type="text" name="sender_account_number" id="sender_account_number" value="" placeholder="sender account number" />
 				</div>
 				<div class="12u$ 12u$(xsmall)">
-					<input type="text" name="reciever_username" id="reciever_username" value="" placeholder="reciever username" />
+					<input type="text" name="receiver_username" id="receiver_username" value="" placeholder="receiver username" />
 				</div>
 				<div class="12u$ 12u$(xsmall)">
-						<input type="text" name="reciever_account_number" id="reciever_account_number" value="" placeholder="reciever account number" />
+						<input type="text" name="receiver_account_number" id="receiver_account_number" value="" placeholder="receiver account number" />
 					</div>
 					<div class="12u$ 12u$(xsmall)">
 							<input type="number" name="amount" id="amount" value="" placeholder="amount" />
@@ -28,7 +33,7 @@
 
 			</div>
 			<ul class="actions">
-					<li><a href="#" class="button special">Submit</a></li>
+					<li><button class="button special" type="submit">Submit</button></li>
 				</ul>
 		</form>
 	</section>

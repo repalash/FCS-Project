@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from random import randint
+
 import transaction as transaction
 from django.contrib.auth.models import User
 from django.db import models
@@ -50,7 +52,12 @@ class Account(models.Model):
 
 
 class Transactions(models.Model):
+	TYPE_CREDIT = 0
+	TYPE_DEBIT = 1
+	TYPE_TRANSACTION = 2
+	CRITICAL_LIMIT = 10000
 	STATUS = (
+		('C', "Created"),
 		('A', "Under Approval"),
 		('P', "Processed"),
 		('I', "Insufficient Funds"),
@@ -62,12 +69,46 @@ class Transactions(models.Model):
 	amount = models.IntegerField(default=0)
 	status = models.CharField(max_length=1, choices=STATUS)
 	is_cash = models.BooleanField()
+	verification_otp = models.IntegerField()
 	creation_time = models.DateTimeField(auto_now_add=True)
 	last_changed_time = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
 		return str(self.from_account.number) + " -> " + str(self.to_account.number) + " : " + str(
 			self.amount) + " : " + self.get_status_display()
+
+	def __init__(self, transaction_type, user, from_account_no, to_account_no, amount):
+		if transaction_type != Transactions.TYPE_TRANSACTION:
+			raise Exception('Security error.')
+		from_account = Account.objects.filter(number=from_account_no)[0]
+		if from_account is None:
+			raise Exception('You don\'t own this account.')
+		if from_account.user.user.username != user.username:
+			raise Exception('Account doesn\'t belong to you')
+		if from_account.balance < amount:
+			raise Exception("Insufficient Funds")
+		to_account = Account.objects.filter(number=to_account_no)[0]
+		if to_account is None:
+			raise Exception('Cannot send to this account')
+		group = 'Employee'
+		if amount >= Transactions.CRITICAL_LIMIT:
+			group = 'Staff'
+		employees = User.objects.filter(groups__name=group)
+		employee = employees[randint(0, employees.count() - 1)]
+		verification_otp = 4321  # TODO palash: randint(999, 10000)
+		if employee is None:
+			raise Exception('No employee available at the moment')
+		super(Transactions, self).__init__(employee=employee, from_account=from_account, to_account=to_account,
+		                                   amount=amount, status='C', is_cash=False, verification_otp=verification_otp)
+
+	def verify_otp(self, otp):
+		if self.verification_otp == 0:
+			raise Exception('Expired OTP')
+		if self.verification_otp != otp:
+			raise Exception('Incorrect OTP')
+		self.status = 'A'
+		self.verification_otp = 0
+
 
 
 class Payments(models.Model):

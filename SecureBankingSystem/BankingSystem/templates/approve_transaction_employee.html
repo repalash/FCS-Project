@@ -1,15 +1,11 @@
 {% extends "base.html" %}
-{% block title %} Approve Debit/Credit requests{% endblock %}
+{% block title %} Transaction requests{% endblock %}
 
 {% block content %}
-    <h1>Approve transaction requests</h1>
-    <!-- Table -->
+    <h1>Transaction requests</h1>
     <section>
         <div class="12u$">
-
-
             <div class="table-wrapper 12u$">
-
                 <table class="alt">
                     <thead>
                     <tr>
@@ -23,14 +19,17 @@
                     </thead>
                     <tbody>
                     {% for i in transactions%}
+                        {% if i.4 == 'Under_Approval' %}
                         <tr>
                             <td>{{i.0}}</td>
                             <td>{{i.1}}</td>
                             <td>{{i.2}}</td>
                             <td>{{i.4}}</td>
                             <td>{{i.3}}</td>
-                            <td><a href="#" class="button small">Approve</a> <a href="#" class="button small">Reject</a></td>
+                            <td><a href="{% url 'approve_transaction_id' i.0 %}" class="button small">Approve</a>
+                                <a href="{% url 'reject_transaction_id' i.0 %}" class="button small">Reject</a></td>
                         </tr>
+                        {% endif %}
                     {% endfor %}
                     </tbody>
                 </table>

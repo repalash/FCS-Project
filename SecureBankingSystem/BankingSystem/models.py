@@ -214,11 +214,20 @@ class Transactions(models.Model):
 			self.process_transaction()
 
 	def payment_reject_transaction(self):
-		if self is None or self.verification_otp != 0 or self.status != 'C':
-			if self:
-				self.status = 'E'
-				self.save()
+		if self.verification_otp != 0 or self.status != 'C':
+			self.status = 'E'
+			self.save()
 			raise BankingException('There was a problem with the transaction')
+		self.status = 'R'
+		self.save()
+
+	def reject_transaction(self, employee):
+		if self.status != 'A':
+			raise BankingException('Problem with the transaction')
+		if self.employee is None:
+			raise BankingException('This transaction cannot be rejected')
+		if self.employee.user.username != employee.username:
+			raise BankingException('You cannot do that')
 		self.status = 'R'
 		self.save()
 

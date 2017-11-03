@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
 
-from BankingSystem.utils import do_get, custom_redirect
+from BankingSystem.models import Transactions
+from BankingSystem.utils import do_get, custom_redirect, BankingException
 
 
 @login_required()
@@ -19,17 +20,48 @@ def dashboard_internal(request):
 	return render(request, 'dashboard_internal_user.html', fields)
 
 
-# TODO palash: ...
 @login_required()
 @permission_required('BankingSystem.employee_operations', raise_exception=True)
-def approve_debit_credit(request):
+def approve_transaction_employee(request):
 	fields = {
+		'redirect_info': do_get(request.GET, 'info'),  # Like already logged in
+		'redirect_success': do_get(request.GET, 'success'),  # Like login successful
+		'redirect_error': do_get(request.GET, 'error'),  # Generic site error
 		'username': request.user.username,
 		'transactions': map(lambda x: str(x).split(), list(request.user.profile.transactions_set.all())),
 		'has_perm_employee_operations': request.user.has_perm('BankingSystem.employee_operations'),
 	}
-	# action of approve and disapprove button
-	return render(request, 'approve_debit_credit_request.html', fields)
+	return render(request, 'approve_transaction_employee.html', fields)
+
+
+@login_required()
+@permission_required('BankingSystem.employee_operations', raise_exception=True)
+def approve_transaction_id(request, transaction_id):
+	transaction = get_object_or_404(Transactions, pk=transaction_id)
+	try:
+		if transaction.employee.user.id != request.user.id:
+			return custom_redirect('approve_transaction_employee', success="You don't have permission")
+		transaction.process_transaction(request.user)
+		if transaction.status == 'P':
+			return custom_redirect('approve_transaction_employee', success="Transaction processed")
+	except Exception as e:
+		return custom_redirect('approve_transaction_employee', error=e.message)
+	return custom_redirect('approve_transaction_employee', info="Unknown error")
+
+
+@login_required()
+@permission_required('BankingSystem.employee_operations', raise_exception=True)
+def reject_transaction_id(request, transaction_id):
+	transaction = get_object_or_404(Transactions, pk=transaction_id)
+	try:
+		if transaction.employee.user.username != request.user.username:
+			return custom_redirect('approve_transaction_employee', success="You don't have permission")
+		transaction.reject_transaction(request.user)
+		if transaction.status == 'R':
+			return custom_redirect('approve_transaction_employee', success="Transaction rejected")
+	except Exception as e:
+		return custom_redirect('approve_transaction_employee', error=e.message)
+	return custom_redirect('approve_transaction_employee', info="Unknown error")
 
 
 @login_required()
@@ -66,6 +98,7 @@ def user_detail_page(request, username):
 	return render(request, 'user_detail_page.html', fields)
 
 
+#TODO team: What's this??
 def employees_access_user_accounts(request):
 	users = []
 	fields = {

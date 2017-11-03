@@ -211,6 +211,7 @@ def technical_accounts_access_for_users(request):
 	employee_username = do_get(request.POST, 'employee_username')
 	return render(request, 'dashboard_internal_user.html', fields)
 
+
 # TODO palash: later
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
@@ -235,6 +236,7 @@ def edit_user_details(request):
 
 	return render(request, 'reenter_password.html')
 
+
 # TODO palash: later
 def reenter_password(request):
 	fields = {
@@ -251,4 +253,3 @@ def reenter_password(request):
 	else:
 		fields['authentication_error'] = 'Invalid username/password'
 	return render(request, 'reenter_password.html', fields)
-

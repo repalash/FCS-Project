@@ -37,14 +37,14 @@
 						<ul>
                             <li>Hello {{ username }} </li>
 							<li><a href="/">Dashboard</a></li>
-							<li><a href="generic.html">Log out</a></li> <!-- TODO: team, make and link logout view. -->
+							<li><a href="{% url 'logout_view' %}">Log out</a></li> <!-- TODO: team, make and link logout view. -->
 						</ul>
 					</nav>
 
 				<!-- Main -->
 					<div id="main">
 						<div class="inner">
-                            <div style="background: gray; padding: 10px 20px 10px 20px; margin-bottom: 20px;">
+                            <div style="background: lightgray; padding: 10px 20px 10px 20px; margin-bottom: 20px;">
                                 <div style="color: red">{{ error }}</div>
                                 <div style="color: red">{{ redirect_error }}</div>
                                 <div style="color: green">{{ redirect_success }}</div>

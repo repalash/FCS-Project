@@ -88,8 +88,8 @@ class Transactions(models.Model):
 	last_changed_time = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
-		from_account = "Cash" if self.from_account else str(self.from_account.number)
-		to_account = "Cash" if self.to_account else str(self.to_account.number)
+		from_account = "Cash" if not self.from_account else str(self.from_account.number)
+		to_account = "Cash" if not self.to_account else str(self.to_account.number)
 		return str(self.id) + " " + from_account + " " + to_account + "  " + str(
 			self.amount) + " " + self.get_status_display()
 
@@ -100,18 +100,17 @@ class Transactions(models.Model):
 			raise BankingException('Invalid Amount')
 		if transaction_type != Transactions.TYPE_TRANSACTION:
 			is_cash = True
+		try:
+			amount = int(amount.strip())
+			if from_account_no:
+				from_account_no = int(from_account_no.strip())
+			if to_account_no:
+				to_account_no = int(to_account_no.strip())
+		except Exception as e:
+			raise BankingException("Invalid data")
 		if from_account_no is None and transaction_type == Transactions.TYPE_CREDIT:
 			from_account = None
 		else:
-			try:
-				amount = int(amount.strip())
-				if from_account_no:
-					from_account_no = int(from_account_no.strip())
-				if to_account_no:
-					to_account_no = int(to_account_no.strip())
-			except Exception as e:
-				print e
-				raise BankingException("Invalid data")
 			from_account = Account.objects.filter(number=from_account_no)
 			if len(from_account) == 0:
 				raise BankingException('You don\'t own this account.')
@@ -133,10 +132,10 @@ class Transactions(models.Model):
 		if amount >= Transactions.CRITICAL_LIMIT:
 			group = 'Staff'
 		employees = User.objects.filter(groups__name=group)
-		if employees.count() == 0:
-			raise BankingException('No employee available at the moment.')
 		if is_cash and pref_employee and len(pref_employee) > 0:
 			employees = employees.filter(username=pref_employee)
+		if employees.count() == 0:
+			raise BankingException('No employee available at the moment.')
 		employee = employees[randint(0, employees.count() - 1)]
 		if employee is None:
 			raise BankingException('No employee available at the moment')

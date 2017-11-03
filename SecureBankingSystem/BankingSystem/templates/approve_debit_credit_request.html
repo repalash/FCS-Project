@@ -2,35 +2,39 @@
 {% block title %} Approve Debit/Credit requests{% endblock %}
 
 {% block content %}
-<h1>Approve Debit/Credit requests</h1>
-<!-- Table -->
-<section>
-    <div class="12u$">
+    <h1>Approve transaction requests</h1>
+    <!-- Table -->
+    <section>
+        <div class="12u$">
 
 
-        <div class="table-wrapper 12u$">
+            <div class="table-wrapper 12u$">
 
-            <table class="alt">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for i in user%}
-                <tr>
-                    <td>{{i.username}}</td>
-                    <td>{{i.account_number}}</td>
-                    <td>{{i.balance}}</td>
-                    <td><a href="#" class="button small">Approve</a> <a href="#" class="button small">Ignore</a></td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                <table class="alt">
+                    <thead>
+                    <tr>
+                        <th>Transaction Id</th>
+                        <th>From Account</th>
+                        <th>To Account</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in transactions%}
+                        <tr>
+                            <td>{{i.0}}</td>
+                            <td>{{i.1}}</td>
+                            <td>{{i.2}}</td>
+                            <td>{{i.4}}</td>
+                            <td>{{i.3}}</td>
+                            <td><a href="#" class="button small">Approve</a> <a href="#" class="button small">Reject</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 {% endblock %}

@@ -5,8 +5,9 @@ from . import views
 
 urlpatterns = [
 	url(r'^login/', views.login_view, name='login_view'),
+	url(r'^logout/', views.logout_view, name='logout_view'),
 	url(r'^dashboard_external/', user_views.dashboard_external, name='dashboard'),
-	url(r'^employee_dashboard/', views.index, name='employee_dashboard'),
+	url(r'^employee_dashboard/', employee_views.dashboard_internal, name='employee_dashboard'),
 	url(r'^$', views.index, name='index'),
 
 	# New code
@@ -26,7 +27,7 @@ urlpatterns = [
 	url(r'^approve_debit_credit/', employee_views.approve_debit_credit, name='approve_debit_credit'),
 	url(r'^employees_access_user_accounts/', employee_views.employees_access_user_accounts, name='employees_access_user_accounts'),
 	#url(r'^handle_request/', employee_views.handle_request, name='handle_request'),
-	url(r'^create_payment/', employee_views.create_payment, name='create_payment'),
-	url(r'^approve_payments_for_users/', employee_views.approve_payments_for_users, name='approve_payments_for_users'),
-	url(r'^technical_accounts_access_for_users/', employee_views.technical_accounts_access_for_users, name='technical_accounts_access_for_users'),
+	url(r'^create_payment/', user_views.create_payment, name='create_payment'),
+	url(r'^approve_payments_for_users/', user_views.approve_payments_for_users, name='approve_payments_for_users'),
+	url(r'^technical_accounts_access_for_users/', user_views.technical_accounts_access_for_users, name='technical_accounts_access_for_users'),
 ]

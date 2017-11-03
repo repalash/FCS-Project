@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from BankingSystem.utils import custom_redirect, do_get
 
@@ -16,7 +16,12 @@ def index(request):
 
 def login_view(request):
 	if request.user.is_authenticated:
-		return custom_redirect("dashboard", info='Already logged in.')
+		if request.user.has_perm('BankingSystem.user_operations'):
+			return custom_redirect("dashboard", success='Already logged in.')
+		if request.user.has_perm('BankingSystem.employee_operations'):
+			return custom_redirect("employee_dashboard", success='Already logged in.')
+		return redirect("index")
+
 	fields = {
 		'authentication_error': ''
 	}
@@ -27,7 +32,11 @@ def login_view(request):
 	user = authenticate(request, username=username, password=password)
 	if user is not None:
 		login(request, user)
-		return custom_redirect("dashboard", success='Successfully logged in.')
+		if user.has_perm('BankingSystem.user_operations'):
+			return custom_redirect("dashboard", success='Successfully logged in.')
+		if user.has_perm('BankingSystem.employee_operations'):
+			return custom_redirect("employee_dashboard", success='Successfully logged in.')
+		return redirect('index')
 	else:
 		fields['authentication_error'] = 'Invalid username/password'
 	return render(request, 'login.html', fields)
@@ -63,3 +72,9 @@ def request_transaction_review(request):  # done
 
 def passbook_account_no(request):
 	return None
+
+
+@login_required()
+def logout_view(request):
+	logout(request)
+	return redirect('login_view')

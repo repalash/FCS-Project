@@ -214,4 +214,3 @@ def technical_accounts_access_for_users(request):
 	employee_username = do_get(request.POST, 'employee_username')
 	return render(request,'dashboard_internal_user.html', fields)
 
-

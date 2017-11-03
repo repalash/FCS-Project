@@ -15,5 +15,5 @@ def do_get(request, param):
 	return ""
 
 
-class BankingParseException(Exception):
+class BankingException(Exception):
 	pass

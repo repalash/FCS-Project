@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import SET_NULL, CASCADE
 
-from BankingSystem.utils import BankingParseException
+from BankingSystem.utils import BankingException
 
 
 class Profile(models.Model):
@@ -48,6 +48,18 @@ class Account(models.Model):
 	def __str__(self):
 		return str(self.number) + " : " + self.user.user.username + " : " + str(
 			self.balance) + " : " + self.get_state_display()
+
+	def do_debit_credit(self, transaction_type, amount, transaction, commit=True):
+		if transaction is None or transaction.amount != amount and transaction.status != 'A':
+			raise BankingException('Security Error')
+		if transaction_type == Transactions.TYPE_DEBIT:
+			self.balance -= amount
+		if transaction_type == Transactions.TYPE_CREDIT:
+			self.balance += amount
+		if self.balance < 0:
+			raise BankingException('Security Error')
+		if commit:
+			self.save()
 
 
 class Transactions(models.Model):
@@ -90,35 +102,35 @@ class Transactions(models.Model):
 			try:
 				amount = int(amount)
 			except:
-				raise BankingParseException("Invalid Amount")
+				raise BankingException("Invalid Amount")
 			from_account = Account.objects.filter(number=from_account_no)
 			if len(from_account) == 0:
-				raise BankingParseException('You don\'t own this account.')
+				raise BankingException('You don\'t own this account.')
 			from_account = from_account[0]
 			if from_account.user.user.username != user.username:
-				raise BankingParseException('Account doesn\'t belong to you')
+				raise BankingException('Account doesn\'t belong to you')
 			if from_account.balance < amount:
-				raise BankingParseException("Insufficient Funds")
+				raise BankingException("Insufficient Funds")
 		if to_account_no is None and transaction_type == Transactions.TYPE_DEBIT:
 			to_account = None
 		else:
 			to_account = Account.objects.filter(number=to_account_no)
 			if len(to_account) == 0:
-				raise BankingParseException('Cannot send to this account')
+				raise BankingException('Cannot send to this account')
 			to_account = to_account[0]
 		if transaction_type == Transactions.TYPE_TRANSACTION and from_account.number == to_account.number:
-			raise BankingParseException("Cannot transfer to same account")
+			raise BankingException("Cannot transfer to same account")
 		group = 'Employee'
 		if amount >= Transactions.CRITICAL_LIMIT:
 			group = 'Staff'
 		employees = User.objects.filter(groups__name=group)
 		if employees.count() == 0:
-			raise BankingParseException('No employee available at the moment')
-		if pref_employee and len(pref_employee) > 0:
+			raise BankingException('No employee available at the moment')
+		if is_cash and pref_employee and len(pref_employee) > 0:
 			employees = employees.filter(username=pref_employee)
 		employee = employees[randint(0, employees.count() - 1)]
 		if employee is None:
-			raise BankingParseException('No employee available at the moment')
+			raise BankingException('No employee available at the moment')
 		verification_otp = 4321  # TODO palash: randint(999, 10000)
 		return Transactions(employee=employee.profile, from_account=from_account, to_account=to_account, amount=amount,
 		                    status='C', is_cash=is_cash, verification_otp=verification_otp)
@@ -128,11 +140,42 @@ class Transactions(models.Model):
 
 	def verify_otp(self, otp):
 		if self.verification_otp == 0:
-			raise BankingParseException('Expired OTP')
+			self.status = 'E'
+			self.save()
+			raise BankingException('Expired OTP, make another transaction')
+		if self.status != 'C':
+			self.status = 'E'
+			self.save()
+			raise BankingException('Problem with the transaction, make another transaction')
 		if self.verification_otp != otp:
-			raise BankingParseException('Incorrect OTP')
+			raise BankingException('Incorrect OTP')
 		self.status = 'A'
 		self.verification_otp = 0
+		self.save()
+
+	def process_transaction(self, employee=None):
+		if self.status != 'A':
+			raise BankingException('Problem with the transaction')
+		if (self.amount >= Transactions.CRITICAL_LIMIT or self.is_cash) and (
+						self.employee is None or self.employee.user.username != employee.username):
+			raise BankingException('Employee didn\'t approve the transaction')
+		if self.from_account is not None and self.amount > self.from_account.balance:
+			self.status = 'I'
+			self.save()
+			raise BankingException('Insufficient Funds')
+		if self.to_account.state != 'O':
+			self.status = 'E'
+			self.save()
+			raise BankingException('Cannot transfer to this account')
+		if self.from_account:
+			self.from_account.do_debit_credit(Transactions.TYPE_DEBIT, self.amount, self, False)
+		if self.to_account:
+			self.to_account.do_debit_credit(Transactions.TYPE_CREDIT, self.amount, self, False)
+		if self.from_account:
+			self.from_account.save()
+		if self.to_account:
+			self.to_account.save()
+		self.status = 'P'
 		self.save()
 
 

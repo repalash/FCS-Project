@@ -5,8 +5,9 @@ from . import views
 
 urlpatterns = [
 	url(r'^login/', views.login_view, name='login_view'),
+	url(r'^logout/', views.logout_view, name='logout_view'),
 	url(r'^dashboard_external/', user_views.dashboard_external, name='dashboard'),
-	url(r'^employee_dashboard/', views.index, name='employee_dashboard'),
+	url(r'^employee_dashboard/', employee_views.dashboard_internal, name='employee_dashboard'),
 	url(r'^$', views.index, name='index'),
 
 	# New code

@@ -70,7 +70,7 @@ class Transactions(models.Model):
 	TYPE_TRANSACTION = 2
 	CRITICAL_LIMIT = 10000
 	STATUS = (
-		('C', "Created"),
+		('C', "OTP_or_Payment_stage"),
 		('A', "Under_Approval"),
 		('P', "Processed"),
 		('R', "Rejected"),
@@ -194,8 +194,8 @@ class Transactions(models.Model):
 
 
 class Payments(models.Model):
-	target_account = models.ForeignKey(Account)
-	target_user = models.ForeignKey(Profile)
+	merchant = models.ForeignKey(Profile, related_name='payment_merchant', null=True)
+	user_account = models.ForeignKey(Account, related_name='payment_user', null=True)
 	transaction = models.ForeignKey(Transactions, null=True, default=None, blank=True)
 	creation_time = models.DateTimeField(auto_now_add=True)
 	last_changed_time = models.DateTimeField(auto_now=True)
@@ -204,3 +204,23 @@ class Payments(models.Model):
 	def __str__(self):
 		return self.target_user + " -> " + self.target_account.user + " : Approved:" + (
 			self.transaction is not None) + " : isDone:" + self.is_done
+
+	@staticmethod
+	def create(merchant, target_account_no, amount):
+		try:
+			amount = int(amount)
+		except:
+			raise BankingException('Invalid Amount')
+		if amount <= 0:
+			raise BankingException('Invalid Amount.')
+		target_account = Account.objects.get(number=target_account_no)
+		if not target_account or target_account.state != 'O':
+			raise BankingException('Cannot get from this account')
+		if merchant.profile.account_set.all().count() < 1:
+			raise BankingException('You don\'t have an account')
+		transaction = Transactions(from_account=target_account, to_account=merchant.profile.account_set.all()[0], amount=amount,
+		                           status='C', is_cash=False, verification_otp=0)
+		transaction.save()
+		payment = Payments(merchant=merchant.profile, user_account=target_account, transaction=transaction)
+		payment.save()
+		return payment

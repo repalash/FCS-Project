@@ -2,41 +2,26 @@
 {% block title %} Create Payment{% endblock %}
 
 {% block content %}
-<!-- Wrapper -->
-			<div id="wrapper">
-				<!-- Main -->
-					<div id="main">
-						<div class="inner">
-							<h1>Create Payment</h1>
-							<!-- Form -->
-								<section>
+    <div id="wrapper">
+        <div id="main">
+            <div class="inner">
+                <h1>Create Payment</h1>
+                <section>
+                    <form method="post" action="{% url 'create_payment' %}" name="form">
+                        {% csrf_token %}
+                        <div class="row uniform">
+                            <input type="text" name="payee_account" id="payee_account" value="" placeholder="account number" />
+                        </div>
+                        <div class="12u$ 12u$(xsmall)">
+                            <input type="number" name="amount" id="amount" value="" placeholder="amount" />
+                        </div>
 
-								{% if is_error %}
-									<p><strong> {{error}} </strong></p>
-								{% endif %}
-
-									<form method="post" action="{% url 'create_payment' %}" name="form">
-										{% csrf_token %}
-										<div class="row uniform">
-												<input type="text" name="payee_username" id="payee_username" value="" placeholder="username" />
-											</div>
-										<div class="12u$ 12u$(xsmall)">
-												<input type="number" name="amount" id="amount" value="" placeholder="amount" />
-											</div>
-
-
-										</div>
-										<ul class="actions">
-												<li><a href="#" class="button special">Submit</a></li>
-											</ul>
-									</form>
-								</section>
-
-
-
-						</div>
-					</div>
-
-
-			</div>
+                        <ul class="actions">
+                            <li><button type="submit" class="button special">Submit</button></li>
+                        </ul>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
 {% endblock %}

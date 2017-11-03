@@ -1,13 +1,12 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
 
-from BankingSystem.models import Transactions
+from BankingSystem.models import Transactions, Payments
 from BankingSystem.utils import do_get, custom_redirect, BankingException
 from django.contrib.auth import authenticate, login
 
 
 # External user dashboard
-# TODO team: fix HTML for accounts list in HTML
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
 def dashboard_external(request):
@@ -54,7 +53,7 @@ def make_transactions(request):
 # Get OTP from the user, verifies and sends transaction for approval
 # TODO palash: Implement OTP
 # TODO team: Show transaction ID on the page
-def transaction_confirmation(request, transaction_id):  # done
+def transaction_confirmation(request, transaction_id):
 	transaction = get_object_or_404(Transactions, pk=transaction_id)
 	fields = {
 		'authentication_error': '',
@@ -159,44 +158,50 @@ def debit_credit(request):
 
 # TODO palash: later
 def reenter_password(request):
-    fields = {
-        'username': request.user.username,
-        'authentication_error':'',
-    }
-    if request.method != 'POST':
-        return render(request, 'reenter_password.html', fields)
-    username = request.user.username,
-    password = do_get(request.POST, 'password')
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        return custom_redirect("dashboard", success='Successfully logged in.')
-    else:
-        fields['authentication_error'] = 'Invalid username/password'
-    return render(request, 'reenter_password.html', fields)
-
+	fields = {
+		'username': request.user.username,
+		'authentication_error': '',
+	}
+	if request.method != 'POST':
+		return render(request, 'reenter_password.html', fields)
+	username = request.user.username,
+	password = do_get(request.POST, 'password')
+	user = authenticate(request, username=username, password=password)
+	if user is not None:
+		return custom_redirect("dashboard", success='Successfully logged in.')
+	else:
+		fields['authentication_error'] = 'Invalid username/password'
+	return render(request, 'reenter_password.html', fields)
 
 
 # TODO palash: later
+@login_required()
+@permission_required('BankingSystem.create_payments', raise_exception=True)
 def create_payment(request):
-	fields ={
-		'iserror':False ,
-		'error':"",
+	fields = {
+		'error': '',
 		'username': request.user.username,
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
 		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'),
 	}
 	if request.method != 'POST':
 		return render(request, 'create_payment.html', fields)
-	payee_username = do_get(request.POST, 'payee_username')
-	amount=  do_get(request.POST, 'amount')
-	return render(request, 'dashboard_internal_user.html', fields)
+	payee_account = do_get(request.POST, 'payee_account')
+	amount = do_get(request.POST, 'amount')
+	try:
+		payment = Payments.create(request.user, payee_account, amount)
+	except BankingException as e:
+		fields['error'] = e.message
+		return render(request, 'create_payment.html', fields)
+	return custom_redirect('dashboard', success="Payment requested from the user.")
+
 
 # TODO palash: later
 def approve_payments_for_users(request):
 	# add the button functionality to approve and ignore
-	users=[]  # amount , payment and merchant_username
-	fields= {
-		'users':users,
+	users = []  # amount , payment and merchant_username
+	fields = {
+		'users': users,
 		'username': request.user.username,
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
 	}
@@ -205,12 +210,11 @@ def approve_payments_for_users(request):
 
 def technical_accounts_access_for_users(request):
 	fields = {
-		'error' :"",
+		'error': "",
 		'username': request.user.username,
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
 	}
 	if request.method != 'POST':
 		return render(request, 'technical_accounts_access_for_users.html', fields)
 	employee_username = do_get(request.POST, 'employee_username')
-	return render(request,'dashboard_internal_user.html', fields)
-
+	return render(request, 'dashboard_internal_user.html', fields)

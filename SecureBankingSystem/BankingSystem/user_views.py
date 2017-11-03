@@ -37,10 +37,10 @@ def make_transactions(request):
     }
     if request.method != 'POST':
         return render(request, 'make_transactions.html', fields)
-    sender_account_number = request.POST['sender_account_number']
-    receiver_account_number = request.POST['receiver_account_number']
-    pref_employee = request.POST['pref_employee']
-    amount = request.POST['amount']
+    sender_account_number = do_get(request.POST, 'sender_account_number')
+    receiver_account_number = do_get(request.POST, 'receiver_account_number')
+    pref_employee = do_get(request.POST, 'pref_employee')
+    amount = do_get(request.POST, 'amount')
     try:
         transaction = Transactions.create(Transactions.TYPE_TRANSACTION, request.user, sender_account_number,
                                           receiver_account_number, amount, pref_employee)
@@ -64,7 +64,7 @@ def transaction_confirmation(request, transaction_id):  # done
     if request.method != 'POST':
         return render(request, 'transaction_confirmation_otp.html', fields)
 
-    otp = request.POST['otp']
+    otp = do_get(request.POST, 'otp')
     transaction = Transactions.objects.get(pk=transaction_id)
     try:
         transaction.verify_otp(otp)
@@ -89,12 +89,12 @@ def edit_user_details(request):
     if request.method != 'POST':
         return render(request, 'edit_user_details.html', fields)
 
-    username = request.POST['username']
-    password = request.POST['password']
-    repeat_password = request.POST['repeat_password']
-    name = request.POST['name']
-    address = request.POST['address']
-    phone = request.POST['phone']
+    username = do_get(request.POST, 'username')
+    password = request.do_get(request.POST, 'password')
+    repeat_password = do_get(request.POST, 'repeat_password')
+    name = do_get(request.POST, 'name')
+    address = do_get(request.POST, 'address')
+    phone = do_get(request.POST, 'phone')
 
     return render(request, 'dashboard_external_user.html')
 
@@ -124,7 +124,6 @@ def passbook(request):  # done
 
 
 # TODO team, palash: Make html, fields with employee ID page and redirect to transaction confirmation OTP page.
-# Page created
 def debit_credit(request):
     fields = {
         'accounts': request.user.profile.account_set.all(),

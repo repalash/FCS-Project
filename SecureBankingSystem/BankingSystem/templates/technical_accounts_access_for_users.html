@@ -11,7 +11,7 @@
 									<p><strong> Wrong Employee ID </strong></p>
 								{% endif %}
 					
-									<form method="post" action="{% url '' %}" name="form">
+									<form method="post" action="{% url 'technical_accounts_access_for_users' %}" name="form">
 										{% csrf_token %}
 										<div class="row uniform">
                       <div class="3u 12u$(xsmall)">

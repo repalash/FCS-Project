@@ -46,7 +46,7 @@ def approve_transaction_id(request, transaction_id):
 			return custom_redirect('approve_transaction_employee', success="Transaction processed")
 	except Exception as e:
 		return custom_redirect('approve_transaction_employee', error=e.message)
-	return custom_redirect('approve_transaction_employee', info="Unknown error")
+	return custom_redirect('approve_transaction_employee', error="Unknown error")
 
 
 @login_required()
@@ -61,7 +61,7 @@ def reject_transaction_id(request, transaction_id):
 			return custom_redirect('approve_transaction_employee', success="Transaction rejected")
 	except Exception as e:
 		return custom_redirect('approve_transaction_employee', error=e.message)
-	return custom_redirect('approve_transaction_employee', info="Unknown error")
+	return custom_redirect('approve_transaction_employee', error="Unknown error")
 
 
 @login_required()
@@ -81,9 +81,9 @@ def user_accounts_list(request):
 @login_required()
 @permission_required('BankingSystem.employee_operations', raise_exception=True)
 def user_detail_page(request, username):
-	user = get_object_or_404(User, pk=username)
-	if user.ticket_employee.user.username != request.user.username:
-		return custom_redirect('user_account_list', error='Access denied')
+	user = get_object_or_404(User, username=username)
+	if user.profile.ticket_employee is None or user.profile.ticket_employee.user.username != request.user.username:
+		return custom_redirect('user_accounts_list', error='Access denied')
 	accounts = user.profile.account_set.all()
 	account_transactions = []
 	for i in accounts:

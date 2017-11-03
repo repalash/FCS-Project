@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 
 from BankingSystem.models import Transactions, Payments
@@ -181,7 +182,7 @@ def approve_payment_id(request, payment_id):
 			return custom_redirect('user_payments', info="Payment is sent for approval")
 	except BankingException as e:
 		return custom_redirect('user_payments', error=e.message)
-	return custom_redirect('user_payments', info="Unknown error")
+	return custom_redirect('user_payments', error="Unknown error")
 
 
 @login_required()
@@ -194,22 +195,33 @@ def reject_payment_id(request, payment_id):
 			return custom_redirect('user_payments', success="Payment rejected")
 	except BankingException as e:
 		return custom_redirect('user_payments', error=e.message)
-	return custom_redirect('user_payments', success="Unknown error")
+	return custom_redirect('user_payments', error="Unknown error")
 
 
 # TODO palash: later
 @login_required()
 @permission_required('BankingSystem.user_operations')
-def technical_accounts_access_for_users(request):
+def technical_accounts_access(request):
 	fields = {
 		'error': "",
 		'username': request.user.username,
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
 	}
 	if request.method != 'POST':
-		return render(request, 'technical_accounts_access_for_users.html', fields)
+		return render(request, 'technical_accounts_access.html', fields)
 	employee_username = do_get(request.POST, 'employee_username')
-	return render(request, 'dashboard_internal_user.html', fields)
+
+	try:
+		employee = User.objects.filter(groups__name='Employees').get(username=employee_username)
+	except:
+		fields['error'] = 'No such employee.'
+		return render(request, 'technical_accounts_access.html', fields)
+	if employee is None:
+		fields['error'] = 'No such employee'
+		return render(request, 'technical_accounts_access.html', fields)
+	request.user.profile.ticket_employee = employee.profile
+	request.user.profile.save()
+	return custom_redirect('dashboard', success="Employee given access to your account.")
 
 
 # TODO palash: later

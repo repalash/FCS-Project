@@ -25,8 +25,8 @@ urlpatterns = [
 	url(r'^user_payments/', user_views.approve_payments_for_users, name='user_payments'),
 	url(r'^approve_payment/(?P<payment_id>[0-9]+)', user_views.approve_payment_id, name='user_payments_approve'),
 	url(r'^reject_payment/(?P<payment_id>[0-9]+)', user_views.reject_payment_id, name='user_payments_reject'),
-	url(r'^technical_accounts_access_for_users/', user_views.technical_accounts_access_for_users,
-	    name='technical_accounts_access_for_users'),
+	url(r'^technical_accounts_access/', user_views.technical_accounts_access,
+	    name='technical_accounts_access'),
 
 	url(r'^user_accounts_list/', employee_views.user_accounts_list, name='user_accounts_list'),
 	url(r'^approve_transaction_employee/', employee_views.approve_transaction_employee,

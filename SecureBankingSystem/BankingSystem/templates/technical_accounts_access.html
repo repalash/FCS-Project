@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Request technical support{% endblock %}
+{% block content %}<h1>Request Technical Support</h1>
+    <section>
+        <form method="post" action="{% url 'technical_accounts_access' %}" name="form">
+            {% csrf_token %}
+            <div class="row uniform">
+                <div class="9u 12u$(xsmall)">
+                    <input type="text" name="employee_username" id="employee_username" value="" placeholder="Employee Username" />
+                </div>
+            </div>
+            <br/>
+            <div class="12u$">
+                <ul class="actions">
+                    <li><input type="submit" value="submit" class="button special" /></li>
+                </ul>
+            </div>
+        </form>
+    </section>
+{% endblock %}

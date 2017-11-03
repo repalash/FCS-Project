@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 
 from BankingSystem.models import Transactions
 from BankingSystem.utils import do_get, custom_redirect, BankingException
+from django.contrib.auth import authenticate, login
 
 
 # External user dashboard
@@ -98,7 +99,7 @@ def edit_user_details(request):
 	address = do_get(request.POST, 'address')
 	phone = do_get(request.POST, 'phone')
 
-	return render(request, 'dashboard_external_user.html')
+	return render(request, 'reenter_password.html')
 
 
 # Show complete transaction history
@@ -153,3 +154,20 @@ def debit_credit(request):
 		fields['error'] = e.message
 		return render(request, 'debit_credit.html', fields)
 	return redirect("transaction_confirmation", transaction_id=transaction.id)
+
+def reenter_password(request):
+    fields = {
+        'username': request.user.username,
+        'authentication_error':'',
+    }
+    if request.method != 'POST':
+        return render(request, 'reenter_password.html', fields)
+    username = request.user.username,
+    password = do_get(request.POST, 'password')
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        return custom_redirect("dashboard", success='Successfully logged in.')
+    else:
+        fields['authentication_error'] = 'Invalid username/password'
+    return render(request, 'reenter_password.html', fields)
+

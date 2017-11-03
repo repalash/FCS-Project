@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^reenter_password/', user_views.reenter_password, name='reenter_password'),
 	#url(r'^edit_user_details/', user_views.edit_user_details, name='edit_user_details'),
 	url(r'^create_payment/', user_views.create_payment, name='create_payment'),
-	url(r'^approve_payments_for_users/', user_views.approve_payments_for_users, name='approve_payments_for_users'),
+	url(r'^user_payments/', user_views.approve_payments_for_users, name='user_payments'),
 	url(r'^technical_accounts_access_for_users/', user_views.technical_accounts_access_for_users, name='technical_accounts_access_for_users'),
 
 	#employess

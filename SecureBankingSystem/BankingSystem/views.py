@@ -11,7 +11,7 @@ from BankingSystem.utils import custom_redirect, do_get
 
 @login_required()
 def index(request):
-	return HttpResponse("Hello, World! If you are seeing this page, you should not.")
+	return redirect("login")
 
 
 def login_view(request):

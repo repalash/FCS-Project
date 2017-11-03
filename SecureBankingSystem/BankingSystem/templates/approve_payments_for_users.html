@@ -1,56 +1,38 @@
-
-
 {% extends "base.html" %}
-{% block title %}Passbook {% endblock %}
-
+{% block title %} Payments {% endblock %}
 {% block content %}
-
-
-				<!-- Main -->
-					<div id="main">
-						<div class="inner  ">
-							<h1>Approve Payments</h1>
-							<!-- Table -->
-								<section>
-							<div class="12u$">		
-
-						
-											
-									<div class="table-wrapper 12u$">
-									
-										<table class="alt">
-											<thead>
-												<tr>
-													<th>Name</th>
-													<th>Description</th>
-													<th>Price</th>
-													<th>    </th>
-												</tr>
-											</thead>
-											<tbody>
-												{% for i in users %}
-												<tr>
-													<td>{{i.amount}}</td>
-													<td>{{i.payment_id}}</td>
-													<td>{{i.merchant_username}}</td>
-													<td> <a href="#" class="button small">Approve</a> <a href="#" class="button small">Ignore</a> </td>
-												</tr>
-												{% endfor %}
-											</tbody>
-										</table>
-									</div>
-							</div>			
-							</section>
-
-							
-
-							
-
-							
-
-						</div>
-					</div>
-					{% endblock %}
+    <div id="main">
+        <div class="inner  ">
+            <h1>Approve Payments</h1>
+            <section>
+                <div class="12u$">
+                    <div class="table-wrapper 12u$">
+                        <table class="alt">
+                            <thead>
+                            <tr>
+                                <th>Merchant</th>
+                                <th>Account</th>
+                                <th>Amount</th>
+                                <th>    </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in payments %}
+                                <tr>
+                                    <td>{{i.merchant}}</td>
+                                    <td>{{i.user_account.number}}</td>
+                                    <td>{{i.transaction.amount}}</td>
+                                    <td> <a href="#" class="button small">Approve</a> <a href="#" class="button small">Ignore</a> </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
 				
 
 

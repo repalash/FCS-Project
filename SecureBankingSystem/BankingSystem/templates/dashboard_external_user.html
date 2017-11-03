@@ -56,6 +56,10 @@
                 <td><a href="{% url 'edit_user_details' %}">Edit Details</a></td>
             </tr>
 
+            <tr>
+                <td><a href="{% url 'user_payments' %}">Payments Due</a></td>
+            </tr>
+
             {% if has_perm_create_payments %}
             <tr>
                 <td><a href="{% url 'create_payment' %}">Create Payments as a Merchant</a></td>

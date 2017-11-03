@@ -174,7 +174,6 @@ def reenter_password(request):
 	return render(request, 'reenter_password.html', fields)
 
 
-# TODO palash: later
 @login_required()
 @permission_required('BankingSystem.create_payments', raise_exception=True)
 def create_payment(request):
@@ -196,18 +195,23 @@ def create_payment(request):
 	return custom_redirect('dashboard', success="Payment requested from the user.")
 
 
-# TODO palash: later
+@login_required()
+@permission_required('BankingSystem.user_operations')
 def approve_payments_for_users(request):
-	# add the button functionality to approve and ignore
-	users = []  # amount , payment and merchant_username
+	payments = []
+	for account in request.user.profile.account_set.all():
+		payments.extend(list(account.payment_user.all()))
 	fields = {
-		'users': users,
+		'payments': payments,
 		'username': request.user.username,
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
 	}
 	return render(request, 'approve_payments_for_users.html', fields)
 
 
+# TODO palash: later
+@login_required()
+@permission_required('BankingSystem.user_operations')
 def technical_accounts_access_for_users(request):
 	fields = {
 		'error': "",

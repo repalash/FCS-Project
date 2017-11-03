@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %} Create Payment{% endblock %}
+
+{% block content %}
+<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							<h1>Create Payment</h1>
+							<!-- Form -->
+								<section>
+
+								{% if is_error %}
+									<p><strong> {{error}} </strong></p>
+								{% endif %}
+
+									<form method="post" action="#" name="form">
+										{% csrf_token %}
+										<div class="row uniform">
+											<div class="12u 12u$(xsmall)">
+												<input type="text" name="sender_account_number" id="sender_account_number" value="" placeholder="sender account number" />
+											</div>
+											<div class="12u 12u$(xsmall)">
+												<input type="text" name="on_behalf_of" id="on_behalf_of" value="" placeholder="On Behalf of (Username)" />
+											</div>
+											<div class="12u$ 12u$(xsmall)">
+												<input type="text" name="reciever_username" id="reciever_username" value="" placeholder="reciever username" />
+											</div>
+											<div class="12u$ 12u$(xsmall)">
+													<input type="text" name="reciever_account_number" id="reciever_account_number" value="" placeholder="reciever account number" />
+												</div>
+												<div class="12u$ 12u$(xsmall)">
+														<input type="number" name="amount" id="amount" value="" placeholder="amount" />
+													</div>
+
+
+										</div>
+										<ul class="actions">
+												<li><a href="#" class="button special">Submit</a></li>
+											</ul>
+									</form>
+								</section>
+
+
+
+						</div>
+					</div>
+
+
+			</div>
+{% endblock %}

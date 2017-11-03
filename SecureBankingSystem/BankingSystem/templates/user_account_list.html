@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}User Accounts List{% endblock %}
+{% block content %}
+
+<div id="wrapper">
+	<!-- Main -->
+	<div id="main">
+		<div class="inner">
+
+
+			<!-- Table -->
+			<section>
+				<br>
+				<h1>User Accounts List</h1>
+				<div class="table-wrapper">
+					<table>
+						<thead>
+							<tr>
+								<th>User Name</th>
+								<th>Account Number</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in user %}
+							<tr>
+								<td>{{i.username}}</td>
+								<td>{{i.account_number}}</td>
+								<td>
+								    <div class="12u$">
+									    <ul class="actions">
+										<li><input type="submit" value="View User" class="special"/></li>
+									    </ul>
+								    </div>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		</div>
+	</div>
+</div>
+{% endblock %}

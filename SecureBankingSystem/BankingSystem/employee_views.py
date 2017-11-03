@@ -2,8 +2,6 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render
 
 
-# TODO palash: ... decide whether the employee is regular employee or system manager
-# TODO palash: What is employees_access_user_accounts for???
 from BankingSystem.utils import do_get
 
 
@@ -16,9 +14,7 @@ def dashboard_internal(request):
 		'redirect_error': do_get(request.GET, 'error'),  # Generic site error
 		'error': '',
 		'username': request.user.username,
-		'has_perm_create_payments': request.user.has_perm('BankingSystem.employee_operations'),
-		# Add more here
-		'is_system_manager': False
+		'has_perm_employee_operations': request.user.has_perm('BankingSystem.employee_operations'),
 	}
 	return render(request, 'dashboard_internal_user.html', fields)
 
@@ -56,7 +52,7 @@ def user_detail_page(request):
 		'transactions':transactions,
 		'has_perm_employee_operations': request.user.has_perm('BankingSystem.employee_operations'),
 	}
-	return render(request, 'user_detail_page.html',fields)
+	return render(request, 'user_detail_page.html', fields)
 
 def employees_access_user_accounts(request):
 	users = []

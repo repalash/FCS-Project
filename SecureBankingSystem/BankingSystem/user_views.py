@@ -79,31 +79,6 @@ def transaction_confirmation(request, transaction_id):
 	return custom_redirect("dashboard", success=info_string)
 
 
-# TODO palash: later
-@login_required()
-@permission_required('BankingSystem.user_operations', raise_exception=True)
-def edit_user_details(request):
-	fields = {
-		'username': request.user.username,
-		'address': request.user.address,
-		'name': request.user.name,
-		'phone': request.user.phone,
-		'error': '',
-		'is_error': False,
-	}
-	if request.method != 'POST':
-		return render(request, 'edit_user_details.html', fields)
-
-	username = do_get(request.POST, 'username')
-	password = request.do_get(request.POST, 'password')
-	repeat_password = do_get(request.POST, 'repeat_password')
-	name = do_get(request.POST, 'name')
-	address = do_get(request.POST, 'address')
-	phone = do_get(request.POST, 'phone')
-
-	return render(request, 'reenter_password.html')
-
-
 # Show complete transaction history
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
@@ -156,24 +131,6 @@ def debit_credit(request):
 	return redirect("transaction_confirmation", transaction_id=transaction.id)
 
 
-# TODO palash: later
-def reenter_password(request):
-	fields = {
-		'username': request.user.username,
-		'authentication_error': '',
-	}
-	if request.method != 'POST':
-		return render(request, 'reenter_password.html', fields)
-	username = request.user.username,
-	password = do_get(request.POST, 'password')
-	user = authenticate(request, username=username, password=password)
-	if user is not None:
-		return custom_redirect("dashboard", success='Successfully logged in.')
-	else:
-		fields['authentication_error'] = 'Invalid username/password'
-	return render(request, 'reenter_password.html', fields)
-
-
 @login_required()
 @permission_required('BankingSystem.create_payments', raise_exception=True)
 def create_payment(request):
@@ -188,7 +145,7 @@ def create_payment(request):
 	payee_account = do_get(request.POST, 'payee_account')
 	amount = do_get(request.POST, 'amount')
 	try:
-		payment = Payments.create(request.user, payee_account, amount)
+		Payments.create(request.user, payee_account, amount)
 	except BankingException as e:
 		fields['error'] = e.message
 		return render(request, 'create_payment.html', fields)
@@ -253,3 +210,45 @@ def technical_accounts_access_for_users(request):
 		return render(request, 'technical_accounts_access_for_users.html', fields)
 	employee_username = do_get(request.POST, 'employee_username')
 	return render(request, 'dashboard_internal_user.html', fields)
+
+# TODO palash: later
+@login_required()
+@permission_required('BankingSystem.user_operations', raise_exception=True)
+def edit_user_details(request):
+	fields = {
+		'username': request.user.username,
+		'address': request.user.address,
+		'name': request.user.name,
+		'phone': request.user.phone,
+		'error': '',
+		'is_error': False,
+	}
+	if request.method != 'POST':
+		return render(request, 'edit_user_details.html', fields)
+
+	username = do_get(request.POST, 'username')
+	password = request.do_get(request.POST, 'password')
+	repeat_password = do_get(request.POST, 'repeat_password')
+	name = do_get(request.POST, 'name')
+	address = do_get(request.POST, 'address')
+	phone = do_get(request.POST, 'phone')
+
+	return render(request, 'reenter_password.html')
+
+# TODO palash: later
+def reenter_password(request):
+	fields = {
+		'username': request.user.username,
+		'authentication_error': '',
+	}
+	if request.method != 'POST':
+		return render(request, 'reenter_password.html', fields)
+	username = request.user.username,
+	password = do_get(request.POST, 'password')
+	user = authenticate(request, username=username, password=password)
+	if user is not None:
+		return custom_redirect("dashboard", success='Successfully logged in.')
+	else:
+		fields['authentication_error'] = 'Invalid username/password'
+	return render(request, 'reenter_password.html', fields)
+

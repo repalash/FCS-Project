@@ -18,11 +18,13 @@ urlpatterns = [
 	url(r'^request_transaction_review/', views.request_transaction_review, name='request_transaction_review'),
 	url(r'^passbook_account_no/', views.passbook_account_no, name='passbook_account_no'),
 	url(r'^edit_user_details/', user_views.edit_user_details, name='edit_user_details'),
-	url(r'^transaction_confirmation/<transaction_id>', user_views.transaction_confirmation, name='transaction_confirmation'),
+	url(r'^transaction_confirmation/(?P<transaction_id>[0-9]+)', user_views.transaction_confirmation, name='transaction_confirmation'),
     url(r'^reenter_password/', user_views.reenter_password, name='reenter_password'),
 	#url(r'^edit_user_details/', user_views.edit_user_details, name='edit_user_details'),
 	url(r'^create_payment/', user_views.create_payment, name='create_payment'),
 	url(r'^user_payments/', user_views.approve_payments_for_users, name='user_payments'),
+	url(r'^approve_payment/(?P<payment_id>[0-9]+)', user_views.approve_payment_id, name='user_payments_approve'),
+	url(r'^reject_payment/(?P<payment_id>[0-9]+)', user_views.reject_payment_id, name='user_payments_reject'),
 	url(r'^technical_accounts_access_for_users/', user_views.technical_accounts_access_for_users, name='technical_accounts_access_for_users'),
 
 	#employess

@@ -192,6 +192,36 @@ class Transactions(models.Model):
 		self.status = 'P'
 		self.save()
 
+	def payment_approve_transaction(self):
+		if self is None or self.verification_otp != 0 or self.status != 'C':
+			if self:
+				self.status = 'E'
+				self.save()
+			raise BankingException('There was a problem with the transaction')
+		self.status = 'A'
+		self.save()
+		if self.amount >= Transactions.CRITICAL_LIMIT:
+			group = 'Staff'
+			employees = User.objects.filter(groups__name=group)
+			if employees.count() == 0:
+				raise BankingException('Critical transaction: No employee available at the moment.')
+			employee = employees[randint(0, employees.count() - 1)]
+			if employee is None:
+				raise BankingException('Critical transaction: No employee available at the moment')
+			self.employee = employee
+			self.save()
+		else:
+			self.process_transaction()
+
+	def payment_reject_transaction(self):
+		if self is None or self.verification_otp != 0 or self.status != 'C':
+			if self:
+				self.status = 'E'
+				self.save()
+			raise BankingException('There was a problem with the transaction')
+		self.status = 'R'
+		self.save()
+
 
 class Payments(models.Model):
 	merchant = models.ForeignKey(Profile, related_name='payment_merchant', null=True)
@@ -218,9 +248,28 @@ class Payments(models.Model):
 			raise BankingException('Cannot get from this account')
 		if merchant.profile.account_set.all().count() < 1:
 			raise BankingException('You don\'t have an account')
-		transaction = Transactions(from_account=target_account, to_account=merchant.profile.account_set.all()[0], amount=amount,
+		transaction = Transactions(from_account=target_account, to_account=merchant.profile.account_set.all()[0],
+		                           amount=amount,
 		                           status='C', is_cash=False, verification_otp=0)
 		transaction.save()
 		payment = Payments(merchant=merchant.profile, user_account=target_account, transaction=transaction)
 		payment.save()
 		return payment
+
+	def approve(self, user):
+		if user is None:
+			raise BankingException('Access denied')
+		if self.user_account.user.user.username != user.username:
+			raise BankingException('You cannot do that')
+		if self.transaction is None:
+			raise BankingException('There was a problem with the transaction')
+		self.transaction.payment_approve_transaction()
+
+	def reject(self, user):
+		if user is None:
+			raise BankingException('Access denied')
+		if self.user_account.user.user.username != user.username:
+			raise BankingException('You cannot do that')
+		if self.transaction is None:
+			raise BankingException('There was a problem with the transaction')
+		self.transaction.payment_reject_transaction()

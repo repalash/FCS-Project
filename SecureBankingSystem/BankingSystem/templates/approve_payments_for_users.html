@@ -3,7 +3,7 @@
 {% block content %}
     <div id="main">
         <div class="inner  ">
-            <h1>Approve Payments</h1>
+            <h1>Payments Due</h1>
             <section>
                 <div class="12u$">
                     <div class="table-wrapper 12u$">
@@ -18,12 +18,15 @@
                             </thead>
                             <tbody>
                             {% for i in payments %}
+                                {% if i.transaction.status == "C" %}
                                 <tr>
                                     <td>{{i.merchant}}</td>
                                     <td>{{i.user_account.number}}</td>
                                     <td>{{i.transaction.amount}}</td>
-                                    <td> <a href="#" class="button small">Approve</a> <a href="#" class="button small">Ignore</a> </td>
+                                    <td> <a href="{% url 'user_payments_approve' i.id %}" class="button small">Approve</a>
+                                        <a href="{% url 'user_payments_reject' i.id %}" class="button small">Ignore</a> </td>
                                 </tr>
+                                {% endif %}
                             {% endfor %}
                             </tbody>
                         </table>

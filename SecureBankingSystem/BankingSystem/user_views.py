@@ -202,11 +202,42 @@ def approve_payments_for_users(request):
 	for account in request.user.profile.account_set.all():
 		payments.extend(list(account.payment_user.all()))
 	fields = {
+		'redirect_info': do_get(request.GET, 'info'),  # Like already logged in
+		'redirect_success': do_get(request.GET, 'success'),  # Like login successful
+		'redirect_error': do_get(request.GET, 'error'),  # Generic site error
 		'payments': payments,
 		'username': request.user.username,
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
 	}
 	return render(request, 'approve_payments_for_users.html', fields)
+
+
+@login_required()
+@permission_required('BankingSystem.user_operations')
+def approve_payment_id(request, payment_id):
+	payment = get_object_or_404(Payments, pk=payment_id)
+	try:
+		payment.approve(request.user)
+		if payment.transaction.status == 'P':
+			return custom_redirect('user_payments', success="Payment processed")
+		if payment.transaction.status == 'A':
+			return custom_redirect('user_payments', info="Payment is sent for approval")
+	except BankingException as e:
+		return custom_redirect('user_payments', error=e.message)
+	return custom_redirect('user_payments', info="Unknown error")
+
+
+@login_required()
+@permission_required('BankingSystem.user_operations')
+def reject_payment_id(request, payment_id):
+	payment = get_object_or_404(Payments, pk=payment_id)
+	try:
+		payment.reject(request.user)
+		if payment.transaction.status == 'R':
+			return custom_redirect('user_payments', success="Payment rejected")
+	except BankingException as e:
+		return custom_redirect('user_payments', error=e.message)
+	return custom_redirect('user_payments', success="Unknown error")
 
 
 # TODO palash: later

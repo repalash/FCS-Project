@@ -44,6 +44,9 @@
 				<!-- Main -->
 					<div id="main">
 						<div class="inner">
+							<div style="color: red">{{ redirect_error }}</div>
+							<div style="color: green">{{ redirect_success }}</div>
+							<div style="color: yellow">{{ redirect_info }}</div>
 					    	{% block content %}
 					    		Hello World
 					    	{% endblock %}

@@ -4,6 +4,10 @@
 {% block content %}
 
 <div class="12u$">
+    <!-- TODO team: beautify this, in table maybe -->
+    {% for account in accounts %}
+        {{ account.number }} {{ account.balance }} <br>
+    {% endfor %}
 
     <div class="table-wrapper 12u$">
 

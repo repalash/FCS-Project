@@ -174,3 +174,44 @@ def reenter_password(request):
         fields['authentication_error'] = 'Invalid username/password'
     return render(request, 'reenter_password.html', fields)
 
+
+
+# TODO palash: later
+def create_payment(request):
+	fields ={
+		'iserror':False ,
+		'error':"",
+		'username': request.user.username,
+		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
+		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'),
+	}
+	if request.method != 'POST':
+		return render(request, 'create_payment.html', fields)
+	payee_username = do_get(request.POST, 'payee_username')
+	amount=  do_get(request.POST, 'amount')
+	return render(request, 'dashboard_internal_user.html', fields)
+
+# TODO palash: later
+def approve_payments_for_users(request):
+	# add the button functionality to approve and ignore
+	users=[]  # amount , payment and merchant_username
+	fields= {
+		'users':users,
+		'username': request.user.username,
+		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
+	}
+	return render(request, 'approve_payments_for_users.html', fields)
+
+
+def technical_accounts_access_for_users(request):
+	fields = {
+		'error' :"",
+		'username': request.user.username,
+		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
+	}
+	if request.method != 'POST':
+		return render(request, 'technical_accounts_access_for_users.html', fields)
+	employee_username = do_get(request.POST, 'employee_username')
+	return render(request,'dashboard_internal_user.html', fields)
+
+

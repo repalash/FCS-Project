@@ -30,6 +30,7 @@ def approve_debit_credit(request):
 	return render(request, 'approve_debit_credit_request.html', fields)
 
 
+# TODO palash: ...  #redirect to user page when button is clicked
 def user_accounts_list(request):
 	users=[]
 	fields = {
@@ -40,12 +41,13 @@ def user_accounts_list(request):
 
 	return render(request, 'user_accounts.html',fields)
 
-def employees_access_user_accounts(request):
-	users=[]
-	fields = {
-		'username': request.user.username,
-		'users': users,
+#TODO palash: ...
+def user_detail_page(request):
+	transactions=[]   #transaction_id , status , amount
+	fields={
+		'username':request.user.username,
+		'transactions':transactions,
 		'has_perm_employee_operations': request.user.has_perm('BankingSystem.employee_operations'),
 	}
-	return render(request, 'employees_access_user_accounts.html',fields)
+	return render(request, 'user_detail_page.html',fields)
 

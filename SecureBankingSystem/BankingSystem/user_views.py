@@ -23,8 +23,8 @@ def dashboard_external(request):
 
 
 # Transfer money from one account to another
-# TODO team: show user all possible accounts that he own, check HTML file
-# TODO team: receiver username not needed
+# TODO team: show user all possible accounts that he own, check HTML file - Done. Now allows user to select from a dropdown.
+# TODO team: receiver username not needed - Done. Removed from page
 # TODO team, palash: add custom employee field
 # TODO palash: send OTP to user
 @login_required()
@@ -52,7 +52,7 @@ def make_transactions(request):
 
 
 # Get OTP from the user, verifies and sends transaction for approval
-# TODO team: No need for password
+# TODO team: No need for password - Done. Removed from the page
 # TODO palash: Implement OTP
 def transaction_confirmation(request, transaction_id):  # done
 	fields = {
@@ -102,7 +102,7 @@ def edit_user_details(request):
 
 
 # Show complete transaction history
-# TODO team: check HTML, not in format
+# TODO team: check HTML, not in format - Done.
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
 def passbook(request):  # done
@@ -126,5 +126,6 @@ def passbook(request):  # done
 
 
 # TODO team, palash: Make html, fields with employee ID page and redirect to transaction confirmation OTP page.
+# Page created
 def debit_credit(request):
 	return None

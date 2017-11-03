@@ -1,0 +1,46 @@
+<h1>Debit/Credit your account</h1>
+
+{% if is_error %}
+	<p><strong> {{error}} </strong></p>
+{% endif %}
+
+<form method="post" name="form">
+	{% csrf_token %}
+	<div class="row uniform">
+
+		<div class="12u$">
+			<div class="select-wrapper">
+				<select name="demo-category" id="demo-category">
+					<option value="">- Choose account -</option>
+					{% for account in accounts %}
+						<option value="{{ account.number }}">{{ account.number }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+
+		<div class="12u$">
+			<div class="select-wrapper">
+				<select name="demo-category" id="demo-category">
+					<option value="">- Debit/Credit -</option>
+					<option value="debit">Debit</option>
+					<option value="credit">Credit</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="12u$ 12u$(xsmall)">
+			<input type="text" name="preferred_employee" id="preferred_employee" value="" placeholder="Preferred Employee for Authorization" />
+		</div>
+
+		<div class="12u$ 12u$(xsmall)">
+				<input type="number" name="amount" id="amount" value="" placeholder="amount" />
+		</div>
+
+
+	</div>
+	<ul class="actions">
+			<li><a href="#" class="button special">Submit</a></li>
+	</ul>
+
+</form>

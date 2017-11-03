@@ -18,12 +18,20 @@
 		<form method="post" action="#" name="form" url="{% url 'make_transaction'%}">
 			{% csrf_token %}
 			<div class="row uniform">
-				<div class="12u 12u$(xsmall)">
-					<input type="text" name="sender_account_number" id="sender_account_number" value="" placeholder="sender account number" />
+				<div class="12u$">
+					<div class="select-wrapper">
+						<select name="demo-category" id="demo-category">
+							<option value="">- Choose account -</option>
+							{% for account in accounts %}
+								<option value="{{ account.number }}">{{ account.number }}</option>
+							{% endfor %}
+						</select>
+					</div>
 				</div>
-				<div class="12u$ 12u$(xsmall)">
-					<input type="text" name="receiver_username" id="receiver_username" value="" placeholder="receiver username" />
-				</div>
+				<!--<div class="12u 12u$(xsmall)">-->
+					<!--<input type="text" name="sender_account_number" id="sender_account_number" value="" placeholder="sender account number" />-->
+				<!--</div>-->
+
 				<div class="12u$ 12u$(xsmall)">
 						<input type="text" name="receiver_account_number" id="receiver_account_number" value="" placeholder="receiver account number" />
 					</div>

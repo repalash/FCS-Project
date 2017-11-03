@@ -4,10 +4,6 @@
 {% block content %}
 <h1>Debit/Credit your account</h1>
 
-{% if is_error %}
-	<p><strong> {{error}} </strong></p>
-{% endif %}
-
 <form method="post" name="form">
 	{% csrf_token %}
 	<div class="row uniform">
@@ -44,7 +40,7 @@
 
 	</div>
 	<ul class="actions">
-			<li><a href="#" class="button special">Submit</a></li>
+			<li><button type="submit" class="button special">Submit</button></li>
 	</ul>
 
 </form>

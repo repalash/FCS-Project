@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from BankingSystem.models import Transactions
 from BankingSystem.utils import do_get, custom_redirect, BankingException
@@ -53,10 +53,13 @@ def make_transactions(request):
 
 # Get OTP from the user, verifies and sends transaction for approval
 # TODO palash: Implement OTP
+# TODO team: Show transaction ID on the page
 def transaction_confirmation(request, transaction_id):  # done
+	transaction = get_object_or_404(Transactions, pk=transaction_id)
 	fields = {
 		'authentication_error': '',
 		'username': request.user.username,
+		'transaction_id': transaction.id,
 		'error': '',
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.view_user_operations'),
 		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'),
@@ -64,22 +67,20 @@ def transaction_confirmation(request, transaction_id):  # done
 
 	if request.method != 'POST':
 		return render(request, 'transaction_confirmation_otp.html', fields)
-
 	otp = do_get(request.POST, 'otp')
-	transaction = Transactions.objects.get(pk=transaction_id)
 	info_string = 'Transaction sent for approval'
 	try:
 		transaction.verify_otp(otp)
-		if not transaction.is_cash or transaction.amount < Transactions.CRITICAL_LIMIT:
+		if not transaction.is_cash and transaction.amount < Transactions.CRITICAL_LIMIT:
 			transaction.process_transaction()
 			info_string = 'Successfully processed transaction'
 	except BankingException as e:
-		fields['authentication_error'] = e.message
+		fields['error'] = e.message
 		return render(request, 'transaction_confirmation_otp.html', fields)
 	return custom_redirect("dashboard", success=info_string)
 
 
-# TODO palash: ...
+# TODO palash: later
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
 def edit_user_details(request):
@@ -107,15 +108,13 @@ def edit_user_details(request):
 # Show complete transaction history
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
-def passbook(request):  # done
+def passbook(request):
 	accounts = request.user.profile.account_set.all()
 	account_transactions = []
 	for i in accounts:
 		account_transactions.extend(map(lambda x: str(x).split(), list(i.from_account.all())))
 		account_transactions.extend(map(lambda x: str(x).split(), list(i.to_account.all())))
 
-	# list of objects containing transaction_id , status , amount
-	# need account number for getting transactions
 	fields = {
 		'username': request.user.username,
 		'error': '',
@@ -124,7 +123,7 @@ def passbook(request):  # done
 		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'),
 	}
 
-	return render(request, 'passbook.html')
+	return render(request, 'passbook.html', fields)
 
 
 # Doing transaction for cash transactions
@@ -157,6 +156,8 @@ def debit_credit(request):
 		return render(request, 'debit_credit.html', fields)
 	return redirect("transaction_confirmation", transaction_id=transaction.id)
 
+
+# TODO palash: later
 def reenter_password(request):
     fields = {
         'username': request.user.username,

@@ -50,6 +50,8 @@ class Account(models.Model):
 			self.balance) + " : " + self.get_state_display()
 
 	def do_debit_credit(self, transaction_type, amount, transaction, commit=True):
+		if amount <= 0:
+			raise BankingException('Invalid Amount')
 		if transaction is None or transaction.amount != amount and transaction.status != 'A':
 			raise BankingException('Security Error')
 		if transaction_type == Transactions.TYPE_DEBIT:
@@ -94,15 +96,22 @@ class Transactions(models.Model):
 	@staticmethod
 	def create(transaction_type, user, from_account_no, to_account_no, amount, pref_employee=""):
 		is_cash = False
+		if amount <= 0:
+			raise BankingException('Invalid Amount')
 		if transaction_type != Transactions.TYPE_TRANSACTION:
 			is_cash = True
 		if from_account_no is None and transaction_type == Transactions.TYPE_CREDIT:
 			from_account = None
 		else:
 			try:
-				amount = int(amount)
-			except:
-				raise BankingException("Invalid Amount")
+				amount = int(amount.strip())
+				if from_account_no:
+					from_account_no = int(from_account_no.strip())
+				if to_account_no:
+					to_account_no = int(to_account_no.strip())
+			except Exception as e:
+				print e
+				raise BankingException("Invalid data")
 			from_account = Account.objects.filter(number=from_account_no)
 			if len(from_account) == 0:
 				raise BankingException('You don\'t own this account.')
@@ -120,20 +129,22 @@ class Transactions(models.Model):
 			to_account = to_account[0]
 		if transaction_type == Transactions.TYPE_TRANSACTION and from_account.number == to_account.number:
 			raise BankingException("Cannot transfer to same account")
-		group = 'Employee'
+		group = 'Employees'
 		if amount >= Transactions.CRITICAL_LIMIT:
 			group = 'Staff'
 		employees = User.objects.filter(groups__name=group)
 		if employees.count() == 0:
-			raise BankingException('No employee available at the moment')
+			raise BankingException('No employee available at the moment.')
 		if is_cash and pref_employee and len(pref_employee) > 0:
 			employees = employees.filter(username=pref_employee)
 		employee = employees[randint(0, employees.count() - 1)]
 		if employee is None:
 			raise BankingException('No employee available at the moment')
 		verification_otp = 4321  # TODO palash: randint(999, 10000)
-		return Transactions(employee=employee.profile, from_account=from_account, to_account=to_account, amount=amount,
-		                    status='C', is_cash=is_cash, verification_otp=verification_otp)
+		transaction = Transactions(employee=employee.profile, from_account=from_account, to_account=to_account,
+		                           amount=amount, status='C', is_cash=is_cash, verification_otp=verification_otp)
+		transaction.save()
+		return transaction
 
 	def __init__(self, *args, **kwargs):
 		super(Transactions, self).__init__(*args, **kwargs)
@@ -147,6 +158,10 @@ class Transactions(models.Model):
 			self.status = 'E'
 			self.save()
 			raise BankingException('Problem with the transaction, make another transaction')
+		try:
+			otp = int(otp)
+		except:
+			raise BankingException('Invalid OTP')
 		if self.verification_otp != otp:
 			raise BankingException('Incorrect OTP')
 		self.status = 'A'

@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render
 
-# TODO palash: ... decide whether the employeem is regular employee or system manager
-# TODO palash: ...
+
+# TODO palash: ... decide whether the employee is regular employee or system manager
+# TODO palash: What is employees_access_user_accounts for???
 @login_required()
 @permission_required('BankingSystem.employee_operations', raise_exception=True)
 def dashboard_internal(request):
@@ -15,19 +16,19 @@ def dashboard_internal(request):
 	return render(request, 'dashboard_internal_user.html', fields)
 
 
-
 # TODO palash: ...
 @login_required()
 @permission_required('BankingSystem.employee_operations', raise_exception=True)
 def approve_debit_credit(request):
-	users = []  # contain list of users where each object has username, account number and balance
+
 	fields = {
 		'username': request.user.username,
-		'users': users,
+		'transactions': request.user.profile.transactions_set.all(),
 		'has_perm_employee_operations': request.user.has_perm('BankingSystem.employee_operations'),
 	}
 	# action of approve and disapprove button
 	return render(request, 'approve_debit_credit_request.html', fields)
+
 
 def user_accounts_list(request):
 	users=[]

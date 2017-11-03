@@ -16,5 +16,6 @@ urlpatterns = [
     url(r'^transaction_confirmation/', views.transaction_confirmation, name='transaction_confirmation'),
     url(r'^passbook_account_no/', views.passbook_account_no, name='passbook_account_no'),
     url(r'^passbook/', views.passbook, name='passbook'),
-    url(r'^passbook/', views.passbook, name='passbook'),
+    url(r'^request_transaction_review/', views.request_transaction_review, name='request_transaction_review'),
+    url(r'^edit_user_details/', views.edit_user_details, name='edit_user_details'),
 ]

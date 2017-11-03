@@ -16,42 +16,43 @@
 	</head>
 	<body>
 		<!-- Wrapper -->
-			<div id="wrapper">
+<div id="wrapper">
 
 
-				<!-- Main -->
-					<div id="main">
-						<div class="inner">
+	<!-- Main -->
+		<div id="main">
+			<div class="inner">
 
 
-							<!-- Table -->
-								<section>
-									<br>
-									<h2>User Accounts</h2>
-									<div class="table-wrapper">
-										<table>
-											<thead>
-												<tr>
-													<th>User Name</th>
-													<th>Account Number</th>
-												</tr>
-											</thead>
-											<tbody>
-                      {% for i in user %}
-												<tr>
-													<td>{{i.username}}</td>
-													<td>{{i.account_number}}</td>
-                        </tr>
-                      {% endfor %}
-											</tbody>
-										</table>
-									</div>
-								</section>
-
-
+				<!-- Table -->
+					<section>
+						<br>
+						<h1>User Accounts</h1>
+						<div class="table-wrapper">
+							<table>
+								<thead>
+									<tr>
+										<th>User Name</th>
+										<th>Account Number</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for i in user %}
+									<tr>
+										<td>{{i.username}}</td>
+										<td>{{i.account_number}}</td>
+									
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
 						</div>
-					</div>
+					</section>
+
+
 			</div>
+		</div>
+</div>
 
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>

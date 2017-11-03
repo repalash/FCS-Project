@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login
 
 
 # External user dashboard
+# TODO team: fix HTML for accounts list in HTML
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
 def dashboard_external(request):
@@ -18,6 +19,7 @@ def dashboard_external(request):
 		'error': '',
 		'has_perm_user_operations': request.user.has_perm('BankingSystem.user_operations'),
 		'has_perm_create_payments': request.user.has_perm('BankingSystem.create_payments'),  # check if user is Company
+		'accounts': request.user.profile.account_set.all()
 	}
 
 	return render(request, 'dashboard_external_user.html', fields)

@@ -23,9 +23,7 @@ def dashboard_external(request):
 
 
 # Transfer money from one account to another
-# TODO team: show user all possible accounts that he own, check HTML file - Done. Now allows user to select from a dropdown.
-# TODO team: receiver username not needed - Done. Removed from page
-# TODO team, palash: add custom employee field
+# TODO team: add pref_employee field
 # TODO palash: send OTP to user
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
@@ -41,10 +39,11 @@ def make_transactions(request):
         return render(request, 'make_transactions.html', fields)
     sender_account_number = request.POST['sender_account_number']
     receiver_account_number = request.POST['receiver_account_number']
+    pref_employee = request.POST['pref_employee']
     amount = request.POST['amount']
     try:
         transaction = Transactions.create(Transactions.TYPE_TRANSACTION, request.user, sender_account_number,
-                                          receiver_account_number, amount)
+                                          receiver_account_number, amount, pref_employee)
     except BankingParseException as e:
         fields['error'] = e.message
         return render(request, 'make_transactions.html', fields)
@@ -52,7 +51,6 @@ def make_transactions(request):
 
 
 # Get OTP from the user, verifies and sends transaction for approval
-# TODO team: No need for password - Done. Removed from the page
 # TODO palash: Implement OTP
 def transaction_confirmation(request, transaction_id):  # done
     fields = {

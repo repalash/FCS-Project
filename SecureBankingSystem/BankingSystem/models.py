@@ -59,6 +59,7 @@ class Transactions(models.Model):
 		('C', "Created"),
 		('A', "Under_Approval"),
 		('P', "Processed"),
+		('R', "Rejected"),
 		('I', "Insufficient_Funds"),
 		('E', "Error"),
 	)
@@ -79,7 +80,7 @@ class Transactions(models.Model):
 			self.amount) + " " + self.get_status_display()
 
 	@staticmethod
-	def create(transaction_type, user, from_account_no, to_account_no, amount):
+	def create(transaction_type, user, from_account_no, to_account_no, amount, pref_employee=""):
 		is_cash = False
 		if transaction_type != Transactions.TYPE_TRANSACTION:
 			is_cash = True
@@ -113,11 +114,13 @@ class Transactions(models.Model):
 		employees = User.objects.filter(groups__name=group)
 		if employees.count() == 0:
 			raise BankingParseException('No employee available at the moment')
+		if pref_employee and len(pref_employee) > 0:
+			employees = employees.filter(username=pref_employee)
 		employee = employees[randint(0, employees.count() - 1)]
 		if employee is None:
 			raise BankingParseException('No employee available at the moment')
 		verification_otp = 4321  # TODO palash: randint(999, 10000)
-		return Transactions(employee=employee, from_account=from_account, to_account=to_account, amount=amount,
+		return Transactions(employee=employee.profile, from_account=from_account, to_account=to_account, amount=amount,
 		                    status='C', is_cash=is_cash, verification_otp=verification_otp)
 
 	def __init__(self, *args, **kwargs):

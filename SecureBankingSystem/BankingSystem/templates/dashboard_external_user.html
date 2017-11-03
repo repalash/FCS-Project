@@ -4,10 +4,33 @@
 {% block content %}
 
 <div class="12u$">
-    <!-- TODO team: beautify this, in table maybe -->
-    {% for account in accounts %}
+   
+    <!--{% for account in accounts %}
         {{ account.number }} {{ account.balance }} <br>
-    {% endfor %}
+    {% endfor %}-->
+    <div class="table-wrapper 12u$">
+									
+										<table class="alt">
+											<thead>
+											    
+												<tr>
+													<th>Account number</th>
+													<th>Account balance</th>
+													
+												</tr>
+												
+											</thead>
+											<tbody>
+											    {% for i in accounts %} 
+												<tr>
+													<td>{{i.number}}</td>
+													<td>{{i.balance}}</td>
+													<!--<td> <a href="#" class="button small">Approve</a> <a href="#" class="button small">Ignore</a> </td>-->
+												</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+									</div>
 
     <div class="table-wrapper 12u$">
 

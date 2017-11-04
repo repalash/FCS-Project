@@ -51,7 +51,7 @@ def make_transactions(request):
 
 
 # Get OTP from the user, verifies and sends transaction for approval
-# TODO team: Show transaction ID on the page
+# TODO team: Show transaction ID on the page - Added
 def transaction_confirmation(request, transaction_id):
 	transaction = get_object_or_404(Transactions, pk=transaction_id)
 	fields = {

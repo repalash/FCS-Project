@@ -24,9 +24,9 @@ class Profile(models.Model):
 	user = models.OneToOneField(User, unique=True, on_delete=CASCADE, primary_key=True)
 	phone = models.CharField(max_length=13)
 	address = models.CharField(max_length=200)
-	totp_seed = models.CharField(max_length=16, default='0')
+	totp_seed = models.CharField(max_length=16, default='0', editable=False)
 	ticket_employee = models.ForeignKey("self", null=True, default=None, on_delete=SET_NULL, blank=True,
-	                                    related_name="employee_ticket")
+	                                    related_name="employee_ticket", editable=False)
 	creation_time = models.DateTimeField(auto_now_add=True)
 	last_changed_time = models.DateTimeField(auto_now=True)
 
@@ -53,7 +53,7 @@ class Account(models.Model):
 	)
 	user = models.ForeignKey(Profile, null=True, on_delete=SET_NULL, blank=True)
 	number = models.IntegerField(primary_key=True, unique=True)
-	balance = models.IntegerField(default=0)
+	balance = models.IntegerField(default=0, editable=False)
 	creation_time = models.DateTimeField(auto_now_add=True)
 	last_changed_time = models.DateTimeField(auto_now=True)
 	state = models.CharField(max_length=1, choices=STATE)
@@ -83,8 +83,8 @@ class Transactions(models.Model):
 	TYPE_TRANSACTION = 2
 	CRITICAL_LIMIT = 10000
 	STATUS = (
-		('C', "OTP_or_Payment_stage"),
-		('A', "Under_Approval"),
+		('C', "OTP_or_Payment"),
+		('A', "Employee_Approval"),
 		('P', "Processed"),
 		('R', "Rejected"),
 		('I', "Insufficient_Funds"),
@@ -93,9 +93,9 @@ class Transactions(models.Model):
 	employee = models.ForeignKey(Profile, null=True, blank=True, on_delete=SET_NULL)
 	from_account = models.ForeignKey(Account, related_name="from_account", null=True, on_delete=SET_NULL, blank=True)
 	to_account = models.ForeignKey(Account, related_name="to_account", null=True, on_delete=SET_NULL, blank=True)
-	amount = models.IntegerField(default=0)
-	status = models.CharField(max_length=1, choices=STATUS)
-	is_cash = models.BooleanField()
+	amount = models.IntegerField(default=0, editable=False)
+	status = models.CharField(max_length=1, choices=STATUS, editable=False)
+	is_cash = models.BooleanField(editable=False)
 	creation_time = models.DateTimeField(auto_now_add=True)
 	last_changed_time = models.DateTimeField(auto_now=True)
 
@@ -248,16 +248,15 @@ class Transactions(models.Model):
 
 
 class Payments(models.Model):
-	merchant = models.ForeignKey(Profile, related_name='payment_merchant', null=True)
-	user_account = models.ForeignKey(Account, related_name='payment_user', null=True)
-	transaction = models.ForeignKey(Transactions, null=True, default=None, blank=True)
+	merchant = models.ForeignKey(Profile, related_name='payment_merchant', null=True, editable=False)
+	user_account = models.ForeignKey(Account, related_name='payment_user', null=True, editable=False)
+	transaction = models.ForeignKey(Transactions, null=True, default=None, blank=True, editable=False)
 	creation_time = models.DateTimeField(auto_now_add=True)
 	last_changed_time = models.DateTimeField(auto_now=True)
-	is_done = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.target_user + " -> " + self.target_account.user + " : Approved:" + (
-			self.transaction is not None) + " : isDone:" + self.is_done
+			self.transaction is not None)
 
 	@staticmethod
 	def create(merchant, target_account_no, amount):

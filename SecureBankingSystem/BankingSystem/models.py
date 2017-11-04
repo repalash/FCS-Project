@@ -188,11 +188,11 @@ class Transactions(models.Model):
 		if (self.amount >= Transactions.CRITICAL_LIMIT or self.is_cash) and (
 						self.employee is None or self.employee.user.username != employee.username):
 			raise BankingException('Employee didn\'t approve the transaction')
-		if self.from_account is not None and self.amount > self.from_account.balance:
+		if self.from_account is not None and self.amount > self.from_account.balance and self.from_account.state != 'O':
 			self.status = 'I'
 			self.save()
 			raise BankingException('Insufficient Funds')
-		if self.to_account.state != 'O':
+		if self.to_account is not None and self.to_account.state != 'O':
 			self.status = 'E'
 			self.save()
 			raise BankingException('Cannot transfer to this account')

@@ -23,13 +23,16 @@ def dashboard_internal(request):
 @login_required()
 @permission_required('BankingSystem.employee_operations', raise_exception=True)
 def approve_transaction_employee(request):
+	transactions = map(lambda x: str(x).split(), list(request.user.profile.transactions_set.all()))
+	transactions.sort(cmp=lambda x, y: int(y[0]) - int(x[0]))
 	fields = {
 		'redirect_info': do_get(request.GET, 'info'),  # Like already logged in
 		'redirect_success': do_get(request.GET, 'success'),  # Like login successful
 		'redirect_error': do_get(request.GET, 'error'),  # Generic site error
 		'username': request.user.username,
-		'transactions': map(lambda x: str(x).split(), list(request.user.profile.transactions_set.all())),
+		'transactions': transactions,
 		'has_perm_employee_operations': request.user.has_perm('BankingSystem.employee_operations'),
+		'has_perm_view_critical_transactions': request.user.has_perm('BankingSystem.view_critical_transactions'),
 	}
 	return render(request, 'approve_transaction_employee.html', fields)
 
@@ -44,7 +47,7 @@ def approve_transaction_id(request, transaction_id):
 		transaction.process_transaction(request.user)
 		if transaction.status == 'P':
 			return custom_redirect('approve_transaction_employee', success="Transaction processed")
-	except Exception as e:
+	except BankingException as e:
 		return custom_redirect('approve_transaction_employee', error=e.message)
 	return custom_redirect('approve_transaction_employee', error="Unknown error")
 

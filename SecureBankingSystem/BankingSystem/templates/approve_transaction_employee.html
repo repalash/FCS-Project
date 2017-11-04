@@ -2,7 +2,7 @@
 {% block title %} Transaction requests{% endblock %}
 
 {% block content %}
-    <h1>Transaction requests</h1>
+    <h1>Transaction requests {% if has_perm_view_critical_transactions %} : Staff {% endif %}</h1>
     <section>
         <div class="12u$">
             <div class="table-wrapper 12u$">
@@ -19,17 +19,19 @@
                     </thead>
                     <tbody>
                     {% for i in transactions%}
-                        {% if i.4 == 'Under_Approval' %}
-                            <tr>
-                                <td>{{i.0}}</td>
-                                <td>{{i.1}}</td>
-                                <td>{{i.2}}</td>
-                                <td>{{i.4}}</td>
-                                <td>{{i.3}}</td>
-                                <td><a href="{% url 'approve_transaction_id' i.0 %}" class="button small">Approve</a>
-                                    <a href="{% url 'reject_transaction_id' i.0 %}" class="button small">Reject</a></td>
-                            </tr>
-                        {% endif %}
+                        <tr>
+                            <td>{{i.0}}</td>
+                            <td>{{i.1}}</td>
+                            <td>{{i.2}}</td>
+                            <td>{{i.4}}</td>
+                            <td>{{i.3}}</td>
+                            <td>
+                                {% if i.4 == 'Employee_Approval' %}
+                                    <a href="{% url 'approve_transaction_id' i.0 %}" class="button small">Approve</a>
+                                    <a href="{% url 'reject_transaction_id' i.0 %}" class="button small">Reject</a>
+                                {% endif %}
+                            </td>
+                        </tr>
                     {% endfor %}
                     </tbody>
                 </table>

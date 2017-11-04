@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
 def dashboard_external(request):
+	print request.user
 	fields = {
 		'username': request.user.username,
 		'redirect_info': do_get(request.GET, 'info'),  # Like already logged in

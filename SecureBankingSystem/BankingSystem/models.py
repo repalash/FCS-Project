@@ -208,7 +208,7 @@ class Transactions(models.Model):
 			employee = employees[randint(0, employees.count() - 1)]
 			if employee is None:
 				raise BankingException('Critical transaction: No employee available at the moment')
-			self.employee = employee
+			self.employee = employee.profile
 			self.save()
 		else:
 			self.process_transaction()

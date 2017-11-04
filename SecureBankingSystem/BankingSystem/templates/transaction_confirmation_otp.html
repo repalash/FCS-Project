@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Confirm Transaction {% endblock %}
 {% block content %}
-    <h1>Confirmation of transaction number {{ transaction_id }}</h1>
+    <h1>Confirmation of transaction number: {{ transaction_id }}</h1>
     <section>
         <form method="post" name="form">
             {% csrf_token %}

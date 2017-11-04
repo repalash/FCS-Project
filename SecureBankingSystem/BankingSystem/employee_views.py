@@ -98,13 +98,3 @@ def user_detail_page(request, username):
 	}
 	return render(request, 'user_detail_page.html', fields)
 
-
-#TODO team: What's this?? - Employees get the list of user requests to troubleshoot (technical account access)
-def employees_access_user_accounts(request):
-	users = []
-	fields = {
-		'username': request.user.username,
-		'users': users,
-		'has_perm_employee_operations': request.user.has_perm('BankingSystem.employee_operations'),
-	}
-	return render(request, 'employees_access_user_accounts.html', fields)

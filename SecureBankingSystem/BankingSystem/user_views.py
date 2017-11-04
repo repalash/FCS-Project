@@ -51,7 +51,6 @@ def make_transactions(request):
 
 
 # Get OTP from the user, verifies and sends transaction for approval
-# TODO team: Show transaction ID on the page - Added
 def transaction_confirmation(request, transaction_id):
 	transaction = get_object_or_404(Transactions, pk=transaction_id)
 	fields = {
@@ -66,16 +65,17 @@ def transaction_confirmation(request, transaction_id):
 	if request.method != 'POST':
 		return render(request, 'transaction_confirmation_otp.html', fields)
 	otp = do_get(request.POST, 'otp')
-	info_string = 'Transaction sent for approval'
 	try:
 		transaction.verify_otp(otp)
 		if not transaction.is_cash and transaction.amount < Transactions.CRITICAL_LIMIT:
 			transaction.process_transaction()
-			info_string = 'Successfully processed transaction'
+			return custom_redirect("dashboard", success="Successfully processed transaction")
+		else:
+			return custom_redirect("dashboard", info='Transaction will be processed after approval from ' + str(
+				transaction.employee))
 	except BankingException as e:
 		fields['error'] = e.message
 		return render(request, 'transaction_confirmation_otp.html', fields)
-	return custom_redirect("dashboard", success=info_string)
 
 
 # Show complete transaction history
@@ -211,7 +211,6 @@ def reset_2fa(request):
 	return render(request, 'reset_2fa.html', fields)
 
 
-# TODO palash: later
 @login_required()
 @permission_required('BankingSystem.user_operations')
 def technical_accounts_access(request):
@@ -235,46 +234,3 @@ def technical_accounts_access(request):
 	request.user.profile.ticket_employee = employee.profile
 	request.user.profile.save()
 	return custom_redirect('dashboard', success="Employee given access to your account.")
-
-
-# TODO palash: later
-@login_required()
-@permission_required('BankingSystem.user_operations', raise_exception=True)
-def edit_user_details(request):
-	fields = {
-		'username': request.user.username,
-		'address': request.user.address,
-		'name': request.user.name,
-		'phone': request.user.phone,
-		'error': '',
-		'is_error': False,
-	}
-	if request.method != 'POST':
-		return render(request, 'edit_user_details.html', fields)
-
-	username = do_get(request.POST, 'username')
-	password = request.do_get(request.POST, 'password')
-	repeat_password = do_get(request.POST, 'repeat_password')
-	name = do_get(request.POST, 'name')
-	address = do_get(request.POST, 'address')
-	phone = do_get(request.POST, 'phone')
-
-	return render(request, 'reenter_password.html')
-
-
-# TODO palash: later
-def reenter_password(request):
-	fields = {
-		'username': request.user.username,
-		'authentication_error': '',
-	}
-	if request.method != 'POST':
-		return render(request, 'reenter_password.html', fields)
-	username = request.user.username,
-	password = do_get(request.POST, 'password')
-	user = authenticate(request, username=username, password=password)
-	if user is not None:
-		return custom_redirect("dashboard", success='Successfully logged in.')
-	else:
-		fields['authentication_error'] = 'Invalid username/password'
-	return render(request, 'reenter_password.html', fields)

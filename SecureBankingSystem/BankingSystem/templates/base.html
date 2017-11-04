@@ -26,12 +26,19 @@
         </div>
     </header>
     <nav id="menu">
-        <h2>Menu</h2>
-        <ul>
-            <li>Hello {{ username }} </li>
-            <li><a href="/">Dashboard</a></li>
-            <li><a href="{% url 'logout_view' %}">Log out</a></li>
-        </ul>
+        {% if username %}
+            <h2>Menu</h2>
+            <ul>
+                <li>Hello {{ username }} </li>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="{% url 'logout_view' %}">Log out</a></li>
+            </ul>
+        {% else %}
+            <h2>Menu</h2>
+            <ul>
+                <li><a href="/">Login</a></li>
+            </ul>
+        {% endif %}
     </nav>
     <div id="main">
         <div class="inner">

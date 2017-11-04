@@ -17,9 +17,9 @@ def index(request):
 def login_view(request):
 	if request.user.is_authenticated:
 		if request.user.has_perm('BankingSystem.user_operations'):
-			return custom_redirect("dashboard", success='Already logged in.')
+			return custom_redirect("dashboard", success='Welcome.')
 		if request.user.has_perm('BankingSystem.employee_operations'):
-			return custom_redirect("employee_dashboard", success='Already logged in.')
+			return custom_redirect("employee_dashboard", success='Welcome.')
 		return redirect("index")
 
 	fields = {

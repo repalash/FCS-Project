@@ -1,74 +1,64 @@
 {% extends "base.html" %}
 {% block title %} Dashboard {% endblock %}
-
 {% block content %}
+    <div class="12u$">
+        <div class="table-wrapper 12u$">
+            <table class="alt">
+                <thead>
+                <tr>
+                    <th>Account number</th>
+                    <th>Account balance</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in accounts %}
+                    <tr>
+                        <td>{{i.number}}</td>
+                        <td>{{i.balance}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="table-wrapper 12u$">
+            <table class="alt">
+                <thead>
+                <tr>
+                    <th>User Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><a href="{% url 'make_transaction' %}">Make Transaction</a></td>
+                </tr>
+                <tr>
+                    <td><a href="{% url 'debit_credit' %}">Debit/Credit Account</a></td>
 
-<div class="12u$">
-   
-    <!--{% for account in accounts %}
-        {{ account.number }} {{ account.balance }} <br>
-    {% endfor %}-->
-    <div class="table-wrapper 12u$">
-									
-										<table class="alt">
-											<thead>
-											    
-												<tr>
-													<th>Account number</th>
-													<th>Account balance</th>
-													
-												</tr>
-												
-											</thead>
-											<tbody>
-											    {% for i in accounts %} 
-												<tr>
-													<td>{{i.number}}</td>
-													<td>{{i.balance}}</td>
-													<!--<td> <a href="#" class="button small">Approve</a> <a href="#" class="button small">Ignore</a> </td>-->
-												</tr>
-												{% endfor %}
-											</tbody>
-										</table>
-									</div>
+                </tr>
+                <tr>
+                    <td><a href="{% url 'passbook' %}">Passbook</a></td>
 
-    <div class="table-wrapper 12u$">
+                </tr>
+                <tr>
+                    <td><a href="{% url 'technical_accounts_access' %}">Request Technical Support</a></td>
+                </tr>
 
-        <table class="alt">
+                <tr>
+                    <td><a href="{% url 'reset_2fa' %}">Setup Google Authenticator OTP</a></td>
+                </tr>
 
-            <tbody>
-            <tr>
-                <td><a href="{% url 'make_transaction' %}">Make Transaction</a></td>
-            </tr>
-            <tr>
-                <td><a href="{% url 'debit_credit' %}">Debit/Credit Account</a></td>
-
-            </tr>
-            <tr>
-                <td><a href="{% url 'passbook' %}">Passbook</a></td>
-
-            </tr>
-            <tr>
-                <td><a href="{% url 'technical_accounts_access' %}">Request Technical Support</a></td>
-            </tr>
-            
-            <tr>
-                <td><a href="{% url 'reset_2fa' %}">Setup Google Authenticator OTP</a></td>
-            </tr>
-
-            <tr>
-                <td><a href="{% url 'user_payments' %}">Payments Due</a></td>
-            </tr>
-
-            {% if has_perm_create_payments %}
-            <tr>
-                <td><a href="{% url 'create_payment' %}">Create Payments as a Merchant</a></td>
-            </tr>
-            {% endif %}
-            </tbody>
-        </table>
+                <tr>
+                    <td><a href="{% url 'user_payments' %}">Payments Due</a></td>
+                </tr>
+                {% if has_perm_create_payments %}
+                    <tr>
+                        <td><a href="{% url 'create_payment' %}">Create Payments as a Merchant</a></td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 {% endblock %}
 
 

@@ -1,47 +1,38 @@
 {% extends "base.html" %}
 {% block title %}Debit/Credit your account {% endblock %}
-
 {% block content %}
-<h1>Debit/Credit your account</h1>
-
-<form method="post" name="form">
-	{% csrf_token %}
-	<div class="row uniform">
-
-		<div class="12u$">
-			<div class="select-wrapper">
-				<select name="account" id="account">
-					<option value="">- Choose account -</option>
-					{% for account in accounts %}
-						<option value="{{ account.number }}">{{ account.number }}</option>
-					{% endfor %}
-				</select>
-			</div>
-		</div>
-
-		<div class="12u$">
-			<div class="select-wrapper">
-				<select name="debit_or_credit" id="debit_or_credit">
-					<option value="">- Debit/Credit -</option>
-					<option value="debit">Debit</option>
-					<option value="credit">Credit</option>
-				</select>
-			</div>
-		</div>
-
-		<div class="12u$ 12u$(xsmall)">
-			<input type="text" name="preferred_employee" id="preferred_employee" value="" placeholder="Preferred Employee for Authorization" />
-		</div>
-
-		<div class="12u$ 12u$(xsmall)">
-				<input type="number" name="amount" id="amount" value="" placeholder="amount" />
-		</div>
-
-
-	</div>
-	<ul class="actions">
-			<li><button type="submit" class="button special">Submit</button></li>
-	</ul>
-
-</form>
+    <h1>Debit/Credit your account</h1>
+    <form method="post" name="form">
+        {% csrf_token %}
+        <div class="row uniform">
+            <div class="12u$">
+                <div class="select-wrapper">
+                    <select name="account" id="account">
+                        <option value="">- Choose account -</option>
+                        {% for account in accounts %}
+                            <option value="{{ account.number }}">{{ account.number }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="12u$">
+                <div class="select-wrapper">
+                    <select name="debit_or_credit" id="debit_or_credit">
+                        <option value="">- Debit/Credit -</option>
+                        <option value="debit">Debit</option>
+                        <option value="credit">Credit</option>
+                    </select>
+                </div>
+            </div>
+            <div class="12u$ 12u$(xsmall)">
+                <input type="text" name="preferred_employee" id="preferred_employee" value="" placeholder="Preferred Employee for Authorization" />
+            </div>
+            <div class="12u$ 12u$(xsmall)">
+                <input type="number" name="amount" id="amount" value="" placeholder="amount" />
+            </div>
+        </div>
+        <ul class="actions">
+            <li><button type="submit" class="button special">Submit</button></li>
+        </ul>
+    </form>
 {% endblock %}

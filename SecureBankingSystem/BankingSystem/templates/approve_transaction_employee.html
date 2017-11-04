@@ -20,15 +20,15 @@
                     <tbody>
                     {% for i in transactions%}
                         {% if i.4 == 'Under_Approval' %}
-                        <tr>
-                            <td>{{i.0}}</td>
-                            <td>{{i.1}}</td>
-                            <td>{{i.2}}</td>
-                            <td>{{i.4}}</td>
-                            <td>{{i.3}}</td>
-                            <td><a href="{% url 'approve_transaction_id' i.0 %}" class="button small">Approve</a>
-                                <a href="{% url 'reject_transaction_id' i.0 %}" class="button small">Reject</a></td>
-                        </tr>
+                            <tr>
+                                <td>{{i.0}}</td>
+                                <td>{{i.1}}</td>
+                                <td>{{i.2}}</td>
+                                <td>{{i.4}}</td>
+                                <td>{{i.3}}</td>
+                                <td><a href="{% url 'approve_transaction_id' i.0 %}" class="button small">Approve</a>
+                                    <a href="{% url 'reject_transaction_id' i.0 %}" class="button small">Reject</a></td>
+                            </tr>
                         {% endif %}
                     {% endfor %}
                     </tbody>

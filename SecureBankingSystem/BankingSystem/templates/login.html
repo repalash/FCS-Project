@@ -1,32 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Login {% endblock %}
-
 {% block content %}
-<h1>Bank of IIITD</h1>
-
-<!-- Form -->
-
-<section>
-    <h2>Log in</h2>
-    {% if authentication_error %}
-    <p><strong> Wrong Credentials </strong></p>
-    {% endif %}
-    <form method="post" name="form" action="{% url 'login_view' %}">
-        {% csrf_token %}
-        <div class="row uniform">
-            <div class="6u 12u$(xsmall)">
-                <input type="text" name="username" id="username" value="" placeholder="Username"/>
+    <h1>Bank of IIITD</h1>
+    <section>
+        <h2>Log in</h2>
+        {% if authentication_error %}
+            <p><strong> Wrong Credentials </strong></p>
+        {% endif %}
+        <form method="post" name="form" action="{% url 'login_view' %}">
+            {% csrf_token %}
+            <div class="row uniform">
+                <div class="6u 12u$(xsmall)">
+                    <input type="text" name="username" id="username" value="" placeholder="Username"/>
+                </div>
+                <div class="6u$ 12u$(xsmall)">
+                    <input type="password" name="password" id="password" value="" placeholder="Password"/>
+                </div>
+                <div class="12u$">
+                    <ul class="actions">
+                        <li><input type="submit" id="sign_in" value="Sign in" class="special"/></li>
+                    </ul>
+                </div>
             </div>
-            <div class="6u$ 12u$(xsmall)">
-                <input type="password" name="password" id="password" value="" placeholder="Password"/>
-            </div>
-            <div class="12u$">
-                <ul class="actions">
-                    <li><input type="submit" id="sign_in" value="Sign in" class="special"/></li>
-                </ul>
-            </div>
-        </div>
-    </form>
-</section>
-
+        </form>
+    </section>
 {% endblock %}

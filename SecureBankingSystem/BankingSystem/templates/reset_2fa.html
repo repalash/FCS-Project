@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Google Authenticator QR Code{% endblock %}
 {% block content %}<h1>Google Authenticator QR Code</h1>
-{% load static %}
+    {% load static %}
     <section>
         {% csrf_token %}
         <div class="row uniform">
             <div class="9u 12u$(xsmall)">
-               <canvas id="qr" style="width:200px;"></canvas>
+                <canvas id="qr" style="width:200px;"></canvas>
                 <script src="{% static 'js/qrious.min.js' %}"></script>
                 <script>
                     (function() {

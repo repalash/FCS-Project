@@ -1,29 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Dashboard {% endblock %}
-
 {% block content %}
-<div class="12u$">
-
-    <div class="table-wrapper 12u$">
-
-        <table class="alt">
-
-            <tbody>
-            <tr>
-                <td><a href="{% url 'user_accounts_list'%}">User Accounts List</a></td>
-            </tr>
-            <tr>
-                <td><a href="{% url 'approve_transaction_employee'%}">Transaction Requests</a></td>
-
-            </tr>
-            {% if is_system_manager %}
+    <div class="12u$">
+        <div class="table-wrapper 12u$">
+            <table class="alt">
+                <tbody>
                 <tr>
-                <td><a href="{% url 'employees_access_user_accounts' %}">Employee Access User Accounts</a></td>
-
-            </tr>
-            {% endif %}
-            </tbody>
-        </table>
+                    <td><a href="{% url 'user_accounts_list'%}">User Accounts List</a></td>
+                </tr>
+                <tr>
+                    <td><a href="{% url 'approve_transaction_employee'%}">Transaction Requests</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 {% endblock %}

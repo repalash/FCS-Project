@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Confirm Transaction {% endblock %}
-
 {% block content %}
-    <h1>Conformation of transaction</h1>
+    <h1>Confirmation of transaction</h1>
     <section>
-
         <form method="post" name="form">
             {% csrf_token %}
             <div class="row uniform">
@@ -14,9 +12,7 @@
                 <div class="9u 12u$(xsmall)">
                     <input type="password" name="otp" id="password" value='' placeholder="" />
                 </div>
-
             </div>
-
             <div class="12u$">
                 <ul class="actions">
                     <li><input type="submit" value="Submit OTP" class="special" /></li>

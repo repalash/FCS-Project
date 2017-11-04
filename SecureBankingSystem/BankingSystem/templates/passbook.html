@@ -1,39 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Passbook {% endblock %}
-
 {% block content %}
-<h1>Passbook</h1>
-
-<section>
-    <div class="12u$">
-
-        <div class="table-wrapper 12u$">
-
-            <table class="alt">
-                <thead>
-                <tr>
-                    <th>Transaction Id</th>
-                    <th>From Account</th>
-                    <th>To Account</th>
-                    <th>Status</th>
-                    <th>Amount</th>
-
-                </tr>
-                </thead>
-                <tbody>
-                {% for i in account_transactions %}
-                <tr>
-                    <td>{{i.0}}</td>
-                    <td>{{i.1}}</td>
-                    <td>{{i.2}}</td>
-                    <td>{{i.4}}</td>
-                    <td>{{i.3}}</td>
-                </tr>
-                {% endfor %}
-
-                </tbody>
-            </table>
+    <h1>Passbook</h1>
+    <section>
+        <div class="12u$">
+            <div class="table-wrapper 12u$">
+                <table class="alt">
+                    <thead>
+                    <tr>
+                        <th>Transaction Id</th>
+                        <th>From Account</th>
+                        <th>To Account</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in account_transactions %}
+                        <tr>
+                            <td>{{i.0}}</td>
+                            <td>{{i.1}}</td>
+                            <td>{{i.2}}</td>
+                            <td>{{i.4}}</td>
+                            <td>{{i.3}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 {% endblock %}

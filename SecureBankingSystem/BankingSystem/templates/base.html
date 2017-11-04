@@ -1,68 +1,57 @@
 {% load static %}
-
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>{% block title %} {% endblock %}</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-		<link rel="stylesheet" href="{% static 'css/main.css' %}" />
-		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
-		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
-	</head>
-	<body>
-		<!-- Wrapper -->
-			<div id="wrapper">
-				<!-- Header -->
-					<header id="header">
-						<div class="inner">
-							<!-- Logo -->
-								<a href="/" class="logo">
-									<span class="symbol"><img src="{% static 'images/logo.svg' %}" alt="" /></span>
-									<span class="title">Mortal Stanley</span>
-								</a>
-							<!-- Nav -->
-								<nav>
-									<ul>
-										<li><a href="#menu">Menu</a></li>
-									</ul>
-								</nav>
-						</div>
-					</header>
+<head>
+    <title>{% block title %} {% endblock %}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+</head>
+<body>
+<div id="wrapper">
+    <header id="header">
+        <div class="inner">
+            <a href="/" class="logo">
+                <span class="symbol"><img src="{% static 'images/logo.svg' %}" alt="" /></span>
+                <span class="title">Mortal Stanley</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#menu">Menu</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <nav id="menu">
+        <h2>Menu</h2>
+        <ul>
+            <li>Hello {{ username }} </li>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="{% url 'logout_view' %}">Log out</a></li>
+        </ul>
+    </nav>
+    <div id="main">
+        <div class="inner">
+            <div style="background: lightgray; padding: 10px 20px 10px 20px; margin-bottom: 20px;">
+                <div style="color: red">{{ error }}</div>
+                <div style="color: red">{{ redirect_error }}</div>
+                <div style="color: green">{{ redirect_success }}</div>
+                <div style="color: yellow">{{ redirect_info }}</div>
+            </div>
+            {% block content %}
+                Hello World
+            {% endblock %}
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/skel.min.js' %}"></script>
+<script src="{% static 'js/util.js' %}"></script>
+<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+<script src="{% static 'js/main.js' %}"></script>
 
-				<!-- Menu -->
-					<nav id="menu">
-						<h2>Menu</h2>
-						<ul>
-                            <li>Hello {{ username }} </li>
-							<li><a href="/">Dashboard</a></li>
-							<li><a href="{% url 'logout_view' %}">Log out</a></li> <!-- TODO: team, make and link logout view. -->
-						</ul>
-					</nav>
-
-				<!-- Main -->
-					<div id="main">
-						<div class="inner">
-                            <div style="background: lightgray; padding: 10px 20px 10px 20px; margin-bottom: 20px;">
-                                <div style="color: red">{{ error }}</div>
-                                <div style="color: red">{{ redirect_error }}</div>
-                                <div style="color: green">{{ redirect_success }}</div>
-                                <div style="color: yellow">{{ redirect_info }}</div>
-                            </div>
-					    	{% block content %}
-					    		Hello World
-					    	{% endblock %}
-						</div>
-					</div>
-			</div>
-
-		<!-- Scripts -->
-			<script src="{% static 'js/jquery.min.js' %}"></script>
-			<script src="{% static 'js/skel.min.js' %}"></script>
-			<script src="{% static 'js/util.js' %}"></script>
-			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
-			<script src="{% static 'js/main.js' %}"></script>
-
-	</body>
+</body>
 </html>

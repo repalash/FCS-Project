@@ -19,13 +19,13 @@
                             <tbody>
                             {% for i in payments %}
                                 {% if i.transaction.status == "C" %}
-                                <tr>
-                                    <td>{{i.merchant}}</td>
-                                    <td>{{i.user_account.number}}</td>
-                                    <td>{{i.transaction.amount}}</td>
-                                    <td> <a href="{% url 'user_payments_approve' i.id %}" class="button small">Approve</a>
-                                        <a href="{% url 'user_payments_reject' i.id %}" class="button small">Ignore</a> </td>
-                                </tr>
+                                    <tr>
+                                        <td>{{i.merchant}}</td>
+                                        <td>{{i.user_account.number}}</td>
+                                        <td>{{i.transaction.amount}}</td>
+                                        <td> <a href="{% url 'user_payments_approve' i.id %}" class="button small">Approve</a>
+                                            <a href="{% url 'user_payments_reject' i.id %}" class="button small">Ignore</a> </td>
+                                    </tr>
                                 {% endif %}
                             {% endfor %}
                             </tbody>

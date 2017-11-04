@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from random import randint
 
+import pyotp
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import SET_NULL, CASCADE
@@ -23,6 +24,7 @@ class Profile(models.Model):
 	user = models.OneToOneField(User, unique=True, on_delete=CASCADE, primary_key=True)
 	phone = models.CharField(max_length=13)
 	address = models.CharField(max_length=200)
+	totp_seed = models.CharField(max_length=16, default='0')
 	ticket_employee = models.ForeignKey("self", null=True, default=None, on_delete=SET_NULL, blank=True,
 	                                    related_name="employee_ticket")
 	creation_time = models.DateTimeField(auto_now_add=True)
@@ -30,6 +32,17 @@ class Profile(models.Model):
 
 	def __str__(self):
 		return self.user.username
+
+	def regenerate_totp_seed(self):
+		self.totp_seed = pyotp.random_base32()
+		self.save()
+		return pyotp.totp.TOTP(self.totp_seed).provisioning_uri(str(self.user.username), issuer_name='Mortal Stanley Bank')
+
+	def verify_otp(self, otp):
+		if len(self.totp_seed) != 16:
+			raise BankingException('Invalid OTP State, authenticate again.')
+		totp = pyotp.TOTP(self.totp_seed)
+		return totp.verify(otp)
 
 
 class Account(models.Model):
@@ -83,7 +96,6 @@ class Transactions(models.Model):
 	amount = models.IntegerField(default=0)
 	status = models.CharField(max_length=1, choices=STATUS)
 	is_cash = models.BooleanField()
-	verification_otp = models.IntegerField()
 	creation_time = models.DateTimeField(auto_now_add=True)
 	last_changed_time = models.DateTimeField(auto_now=True)
 
@@ -139,9 +151,8 @@ class Transactions(models.Model):
 		employee = employees[randint(0, employees.count() - 1)]
 		if employee is None:
 			raise BankingException('No employee available at the moment')
-		verification_otp = 4321  # TODO palash: randint(999, 10000)
 		transaction = Transactions(employee=employee.profile, from_account=from_account, to_account=to_account,
-		                           amount=amount, status='C', is_cash=is_cash, verification_otp=verification_otp)
+		                           amount=amount, status='C', is_cash=is_cash)
 		transaction.save()
 		return transaction
 
@@ -149,10 +160,15 @@ class Transactions(models.Model):
 		super(Transactions, self).__init__(*args, **kwargs)
 
 	def verify_otp(self, otp):
-		if self.verification_otp == 0:
+		account = self.from_account
+		if account is None:
+			account = self.to_account
+		if account is None:
+			raise BankingException('Invalid transaction')
+		if len(account.user.totp_seed) != 16:
 			self.status = 'E'
 			self.save()
-			raise BankingException('Expired OTP, make another transaction')
+			raise BankingException('Re-authenticate from authenticator and make another transaction')
 		if self.status != 'C':
 			self.status = 'E'
 			self.save()
@@ -161,10 +177,9 @@ class Transactions(models.Model):
 			otp = int(otp)
 		except:
 			raise BankingException('Invalid OTP')
-		if self.verification_otp != otp:
+		if not account.user.verify_otp(otp):
 			raise BankingException('Incorrect OTP')
 		self.status = 'A'
-		self.verification_otp = 0
 		self.save()
 
 	def process_transaction(self, employee=None):
@@ -193,11 +208,11 @@ class Transactions(models.Model):
 		self.save()
 
 	def payment_approve_transaction(self):
-		if self is None or self.verification_otp != 0 or self.status != 'C':
+		if self.status != 'C':
 			if self:
 				self.status = 'E'
 				self.save()
-			raise BankingException('There was a problem with the transaction')
+			raise BankingException('There was a problem with the transaction/OTP')
 		self.status = 'A'
 		self.save()
 		if self.amount >= Transactions.CRITICAL_LIMIT:
@@ -214,7 +229,7 @@ class Transactions(models.Model):
 			self.process_transaction()
 
 	def payment_reject_transaction(self):
-		if self.verification_otp != 0 or self.status != 'C':
+		if self.status != 'C':
 			self.status = 'E'
 			self.save()
 			raise BankingException('There was a problem with the transaction')
@@ -260,7 +275,7 @@ class Payments(models.Model):
 			raise BankingException('You don\'t have an account')
 		transaction = Transactions(from_account=target_account, to_account=merchant.profile.account_set.all()[0],
 		                           amount=amount,
-		                           status='C', is_cash=False, verification_otp=0)
+		                           status='C', is_cash=False)
 		transaction.save()
 		payment = Payments(merchant=merchant.profile, user_account=target_account, transaction=transaction)
 		payment.save()

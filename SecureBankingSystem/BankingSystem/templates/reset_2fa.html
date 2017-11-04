@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Google Authenticator QR Code{% endblock %}
+{% block content %}<h1>Google Authenticator QR Code</h1>
+{% load static %}
+    <section>
+        {% csrf_token %}
+        <div class="row uniform">
+            <div class="9u 12u$(xsmall)">
+               <canvas id="qr" style="width:200px;"></canvas>
+                <script src="{% static 'js/qrious.min.js' %}"></script>
+                <script>
+                    (function() {
+                        var qr = new QRious({
+                            element: document.getElementById('qr'),
+                            value: '{{ token_url }}'
+                        });
+                    })();
+                </script>
+
+            </div>
+        </div>
+        <br/>
+        <div class="12u$">
+            <ul class="actions">
+                <li><div class="button special" disabled="true"> Scan the above QR code in the app </div></li>
+                <li><a href="{% url 'dashboard' %}" class="button special" > Go Back </a></li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}

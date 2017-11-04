@@ -26,7 +26,6 @@ def dashboard_external(request):
 
 
 # Transfer money from one account to another
-# TODO palash: send OTP to user
 @login_required()
 @permission_required('BankingSystem.user_operations', raise_exception=True)
 def make_transactions(request):
@@ -52,7 +51,6 @@ def make_transactions(request):
 
 
 # Get OTP from the user, verifies and sends transaction for approval
-# TODO palash: Implement OTP
 # TODO team: Show transaction ID on the page
 def transaction_confirmation(request, transaction_id):
 	transaction = get_object_or_404(Transactions, pk=transaction_id)
@@ -196,6 +194,21 @@ def reject_payment_id(request, payment_id):
 	except BankingException as e:
 		return custom_redirect('user_payments', error=e.message)
 	return custom_redirect('user_payments', error="Unknown error")
+
+
+@login_required()
+@permission_required('BankingSystem.user_operations', raise_exception=True)
+def reset_2fa(request):
+	fields = {
+		'username': request.user.username,
+		'redirect_info': do_get(request.GET, 'info'),  # Like already logged in
+		'redirect_success': do_get(request.GET, 'success'),  # Like login successful
+		'redirect_error': do_get(request.GET, 'error'),  # Generic site error
+		'error': '',
+		'token_url': request.user.profile.regenerate_totp_seed()
+	}
+
+	return render(request, 'reset_2fa.html', fields)
 
 
 # TODO palash: later

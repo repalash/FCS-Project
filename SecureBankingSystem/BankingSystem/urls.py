@@ -11,6 +11,7 @@ urlpatterns = [
 	url(r'^$', views.index, name='index'),
 
 	url(r'^make_transaction/', user_views.make_transactions, name='make_transaction'),
+	url(r'^reset_2fa/', user_views.reset_2fa, name='reset_2fa'),
 	url(r'^debit_credit/', user_views.debit_credit, name='debit_credit'),
 	url(r'^approve_transaction_employee/', employee_views.approve_transaction_employee,
 	    name='approve_transaction_employee'),

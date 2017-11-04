@@ -102,9 +102,9 @@ class Transactions(models.Model):
 			is_cash = True
 		try:
 			amount = int(amount.strip())
-			if from_account_no:
+			if from_account_no is not None:
 				from_account_no = int(from_account_no.strip())
-			if to_account_no:
+			if to_account_no is not None:
 				to_account_no = int(to_account_no.strip())
 		except Exception as e:
 			raise BankingException("Invalid data")
@@ -135,7 +135,7 @@ class Transactions(models.Model):
 		if is_cash and pref_employee and len(pref_employee) > 0:
 			employees = employees.filter(username=pref_employee)
 		if employees.count() == 0:
-			raise BankingException('No employee available at the moment.')
+			raise BankingException('No employee available at the moment. Maybe transaction is critical. ')
 		employee = employees[randint(0, employees.count() - 1)]
 		if employee is None:
 			raise BankingException('No employee available at the moment')
@@ -248,8 +248,9 @@ class Payments(models.Model):
 	def create(merchant, target_account_no, amount):
 		try:
 			amount = int(amount)
+			target_account_no = int(target_account_no)
 		except:
-			raise BankingException('Invalid Amount')
+			raise BankingException('Invalid Data')
 		if amount <= 0:
 			raise BankingException('Invalid Amount.')
 		target_account = Account.objects.get(number=target_account_no)

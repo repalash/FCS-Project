@@ -89,6 +89,7 @@ def user_detail_page(request, username):
 	for i in accounts:
 		account_transactions.extend(map(lambda x: str(x).split(), list(i.from_account.all())))
 		account_transactions.extend(map(lambda x: str(x).split(), list(i.to_account.all())))
+	account_transactions.sort(cmp=lambda x, y: int(y[0]) - int(x[0]))
 	fields = {
 		'username': request.user.username,
 		'user': user,
